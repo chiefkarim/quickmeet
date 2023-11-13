@@ -4,7 +4,7 @@ A Real Time Video and Chat Application which enables users to have realtime vide
 ## BACK END Repository
 https://github.com/victorchrollo14/techTalk
 ## live preview
-
+https://quickmeet.tech/
 
 ## TECH STACK
 * React.js 
