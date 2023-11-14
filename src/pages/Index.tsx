@@ -29,7 +29,7 @@ function Index(){
 </div>
   </div>
     </section>
-    <section className="first text-center pb-20 pt-40">
+    <section className="first text-center overflow-hidden pb-20 pt-40">
       <div className="container ">
         <h1>Compatible With Any Device</h1>
         <div className="flex justify-between mt-20">

@@ -12,7 +12,8 @@ export default {
         "extra-light-grey":"#DAE3EA",
         "light-grey":"#6D7D8B",
         "purple":"#811870",
-        "green":"#188170"
+        "green":"#188170",
+        "off-white":"#efefef"
       },
      
       fontSize:{
