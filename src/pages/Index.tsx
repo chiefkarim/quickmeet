@@ -34,7 +34,7 @@ function Index(){
         <h1>Compatible With Any Device</h1>
         <div className="flex justify-between mt-20">
         <div className="left text-left">
-          <p className="pl-[50px]" >Mobile</p>
+          <p className="pl-[50px]" >Mobile </p>
           <img src={mobileSVG}/>
         </div>
         <div className="right -mr-[300px] text-left ">
