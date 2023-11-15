@@ -7,6 +7,8 @@ const GoogleAuth = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get("code");
 
+  console.log(token);
+
   const redirect = () => {
     setInterval(() => {
       window.location.href = "/";
@@ -21,7 +23,7 @@ const GoogleAuth = () => {
       const data = await response.json();
 
       if (response.status === 200) {
-        console.log("user successfully logged In");
+        alert("user successfully logged In");
         localStorage.setItem("google-token", data.token);
         redirect();
       } else if (response.status === 500 || response.status === 400) {
@@ -32,6 +34,10 @@ const GoogleAuth = () => {
     }
   };
 
+  const logout = async () => {
+    // remove token from local storage
+  };
+
   useState(() => {
     if (code && !token) {
       console.log(code);
@@ -40,12 +46,21 @@ const GoogleAuth = () => {
   });
   return (
     <>
-      <a
-        href={url}
-        className="py-[10px] px-[50px]  border-purple border-2 rounded-[8px] "
-      >
-        Sign in
-      </a>
+      {token ? (
+        <a
+          onClick={logout}
+          className="py-[10px] px-[50px]  border-purple border-2 rounded-[8px] "
+        >
+          logout
+        </a>
+      ) : (
+        <a
+          href={url}
+          className="py-[10px] px-[50px]  border-purple border-2 rounded-[8px] "
+        >
+          Sign in
+        </a>
+      )}
     </>
   );
 };
