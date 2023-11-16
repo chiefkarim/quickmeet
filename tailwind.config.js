@@ -3,6 +3,12 @@
 export default {
   content: ["./src/**/*.{html,js,tsx}"],
   theme: {
+    screens:{
+      "tablet" : {"max":"991px"},
+      "mobile-landscape" : {"max" : "767px"},
+      "mobile" :{"max" : "479px"}
+    }
+    ,
     fontFamily:{
       sans:["Mulish"]
       },

@@ -47,6 +47,22 @@ section{
   padding-left: 140px;
   padding-right: 140px;
 }
+@media  (max-width:991px) {
+  section{
+    padding-left: 30px;
+    padding-right: 30px;
+    overflow: hidden;
+  }
+  .container{
+    max-width: 900px;
+  }
+  p{
+    font-size: 1.125rem ;
+  }
+  h1{
+    font-size: 2.125rem;
+  }
+}
 a {
   font-weight: 500;
   color: var(--black);
