@@ -49,14 +49,14 @@ const GoogleAuth = () => {
       {token ? (
         <a
           onClick={logout}
-          className="py-[10px] px-[50px] tablet:px-[30px] border-purple border-2 rounded-[8px] "
+          className="py-[10px] px-[50px] tablet:px-[30px] mobile:text-white border-purple border-2 rounded-[8px] "
         >
           logout
         </a>
       ) : (
         <a
           href={url}
-          className="py-[10px] px-[50px] tablet:px-[30px] tablet:py-[4px] border-purple border-2 rounded-[8px] "
+          className="py-[10px] px-[50px] tablet:px-[30px] mobile:px-0 mobile:text-white tablet:py-[4px] border-purple border-2 rounded-[8px] "
         >
           Sign in
         </a>

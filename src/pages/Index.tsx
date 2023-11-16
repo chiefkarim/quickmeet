@@ -11,12 +11,12 @@ import welcomeSVG from "../assets/images/welcome.svg";
 function Index() {
   return (
     <div className="bg-white">
-      <section className="max-h-[636px] header  overflow-hidden ">
+      <section className=" header  overflow-hidden ">
         <Navbar />
 
-        <div className="container pt-[30px] tablet:pt-[10px]">
-          <div className="flex justify-between ">
-            <div className="left max-w-[432px] tablet:max-w-[300px]">
+        <div className="container pt-[30px] tablet:pt-[60px] ">
+          <div className="flex justify-between mobile:flex-wrap ">
+            <div className="left max-w-[432px] tablet:max-w-[330px] mobile:pb-[30px]">
               <h1 className="text-black ">
                 Join or start a conference call with just one click
               </h1>
@@ -25,7 +25,7 @@ function Index() {
                 meeting or create new one instantly and your information won’t
                 be saved.
               </p>
-              <div className="flex tablet:flex-col tablet:items-start items-center mt-[70px] tablet:mt-[50px] gap-[30px] tablet:gap-[15px]">
+              <div className="flex tablet:flex-wrap tablet:items-start items-center mt-[70px] tablet:mt-[50px] gap-[30px] tablet:gap-[15px]">
                 <button className="bg-green  text-[14px] tablet:text-[12px] tablet:px-[10px] px-[18px] py-[11px] text-white">
                   New Meeting
                 </button>
@@ -41,7 +41,7 @@ function Index() {
                 </div>
               </div>
             </div>
-            <div className="right -mr-[140px]">
+            <div className="right -mr-[140px] tablet:-mr-[30px] ">
               <img src={headerSVG} className="" />
             </div>
           </div>
@@ -52,22 +52,22 @@ function Index() {
           <h1 className="text-black">Compatible With Any Device</h1>
           <div className="flex justify-between mt-20">
             <div className="left text-left">
-              <p className="pl-[50px]">Mobile </p>
+              <p className="pl-[50px] mobile:pl-1">Mobile </p>
               <img src={mobileSVG} />
             </div>
-            <div className="right -mr-[300px] text-left ">
-              <p className="pl-[180px]">Desktop</p>
+            <div className="right -mr-[300px] tablet:-mr-[150px] mobile:-mr-[50px] text-left ">
+              <p className="pl-[180px] mobile:pl-10 ">Desktop</p>
               <img src={desktop} />
             </div>
           </div>
         </div>
       </section>
       <section className="second py-20">
-        <div className="container flex justify-between items-center ">
-          <div className="right -ml-[140px] tablet:-ml-[30px]   ">
+        <div className="container flex mobile:flex-wrap  justify-between items-center  ">
+          <div className="right  -ml-[140px] tablet:-ml-[30px] mobile:-ml-[0px]   ">
             <img src={privacySVG}  />
           </div>
-          <div className="left max-w-[525px] tablet:max-w-[400px] pl-[30px]">
+          <div className="left max-w-[525px]  tablet:max-w-[400px] pl-[30px] mobile:pt-10  mobile:pl-0">
             <h1 className="text-black">
               <span className="text-green">privacy</span> <br />
               No data is being saved
@@ -82,9 +82,9 @@ function Index() {
         </div>
       </section>
       <section className="third py-20">
-        <div className="container flex  justify-between items-center ">
-          <div className="left max-w-[525px] tablet:pr-[30px] tablet:max-w-[400px]">
-            <h1 className="text-black">
+        <div className="container flex mobile:flex-wrap mobile:flex-col-reverse  justify-between items-center mobile:items-start ">
+          <div className="left max-w-[525px] tablet:pr-[30px] mobile:pt-10 tablet:max-w-[400px] ">
+            <h1 className="text-black ">
               <span className="text-green">Transparency & care</span>
               <br />
               we are completely open source
@@ -96,17 +96,17 @@ function Index() {
               behind the curtains. and if you want a feature you can request it.
             </p>
           </div>
-          <div className="right -mr-[140px] tablet:-mr-[30px]">
+          <div className="right -mr-[140px]  tablet:-mr-[30px] mobile:-mr-0">
             <img src={transparencySVG} />
           </div>
         </div>
       </section>
       <section className="forth py-20">
-        <div className="container flex justify-between items-center ">
-          <div className="right -ml-[140px] tablet:-ml-[30px]">
+        <div className="container flex mobile:flex-wrap  justify-between items-center mobile:items-left ">
+          <div className="right -ml-[140px] tablet:-ml-[30px] mobile:-ml-0">
             <img src={easySVG} />
           </div>
-          <div className="left max-w-[525px] tablet:max-w-[400px] tablet:pl-[30px] ">
+          <div className="left max-w-[525px] tablet:max-w-[400px] tablet:pl-[30px] mobile:pt-10 mobile:pl-0 ">
             <h1 className="text-black">
               <span className="text-green">Fast & Easy</span>
               <br />
@@ -121,14 +121,14 @@ function Index() {
         </div>
       </section>
       <section className="fifth py-20">
-        <div className="container flex  justify-between items-center ">
+        <div className="container flex mobile:flex-wrap justify-between items-center gap-[30px] text-center">
           <div className="left max-w-[525px] ">
             <h1 className="text-black">Get started right now </h1>
-            <div className="mt-[80px] tablet:mt-[30px] ">
-              <button className="bg-green text-white tablet:px-[50px] px-[54px] py-[11px] mr-[40px] tablet:mb-[15px]">
+            <div className="mt-[80px] mobile:flex mobile:flex-wrap tablet:mt-[30px] mobile:gap-[10px] justify-around">
+              <button className="bg-green text-white tablet:px-[50px] px-[54px] py-[11px] mr-[40px] mobile:mr-0 tablet:mb-[15px] mobile:mb-0">
                 Register
               </button>
-              <button className="bg-transparent  border-2 tablet:px-[30px] px-[45px] py-[11px] border-green text-green">
+              <button className="bg-transparent  border-2 tablet:px-[30px] px-[45px] mobile:mr-0 py-[11px] border-green text-green">
                 New Meeting
               </button>
             </div>
