@@ -1,7 +1,7 @@
 import logo from "../assets/images/Logo.svg"
 
 function Footer(){
-    return (<footer><div id="footer" className="container flex justify-between py-10">
+    return (<footer><div id="footer" className={`container flex justify-between py-10`}>
         <a>
             <img src={logo}/>
         </a>

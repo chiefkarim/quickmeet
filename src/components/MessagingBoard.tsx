@@ -4,7 +4,7 @@ import uploadPhoto from "../assets/images/photo.svg"
 
 function MessagingBoard(){
     return (
-        <div className= "w-[20.4375rem] h-[33.4375rem] bg-off-white flex flex-col justify-between">
+        <div className= "w-full h-stretch bg-off-white flex flex-col justify-between">
             <div className="messages rounded-[8px] my-[1.38rem] mx-[0.38rem]  flex  ">
                 <img src={easy} className="h-[2.7rem] w-[2.7rem] inline-block rounded-[16px] mx-[1rem] "/>
                 <div className=" bg-white w-[13.9375rem] py-[0.56rem] px-[0.81rem] inline-block mt-[1.35rem]">

@@ -7,7 +7,6 @@ const GoogleAuth = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get("code");
 
-  console.log(token);
 
   const redirect = () => {
     setInterval(() => {
@@ -40,7 +39,6 @@ const GoogleAuth = () => {
 
   useState(() => {
     if (code && !token) {
-      console.log(code);
       handleLogin();
     }
   });
