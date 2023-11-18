@@ -1,8 +1,6 @@
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import MessagingBoard from "../components/MessagingBoard";
 import { useEffect, useState, useRef } from "react";
-import SideBar from "../components/sidebar";
 
 function Meet() {
   const [stream,setStream] = useState<null | MediaStream>(null)
