@@ -7,6 +7,18 @@ function Meet() {
   const [screenWidth,setScreenWidth] = useState<null | number>(null)
   const [camState,setCamState] = useState(true)
   const videoRef =useRef< null | HTMLVideoElement>(null)
+//gets the userMedia
+  async function getMediaAccess(){if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
+    try{
+     const mediaStream = await navigator.mediaDevices.getUserMedia({audio:true,video:{ facingMode:"user",width:screenWidth || 883,height:{min:402}}})
+    setStream(mediaStream)
+    if(videoRef.current){
+      videoRef.current.srcObject = stream
+    }
+   } catch(error){
+    console.error(error)
+   }
+  }}
 
 useEffect(()=>{
   //responsiveness video
@@ -15,7 +27,9 @@ setScreenWidth(window.innerWidth)
   }
   window.addEventListener('resize',updateScreenWidth);
 
-// clean up media tracks and event listener
+//Get user media
+getMediaAccess()
+// clean up event listener
 return () => {
  window.removeEventListener('resize',updateScreenWidth)
  
@@ -23,21 +37,26 @@ return () => {
 },[screenWidth])
 function disableCam(){
   setCamState(false)
-}
-//Get user media
-
-async function  requestMediaAccess(){
-  if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
-  try{
-   const mediaStream = await navigator.mediaDevices.getUserMedia({audio:true,video:{ facingMode:"user",width:screenWidth || 883,height:{min:402}}})
-  setStream(mediaStream)
-  if(videoRef.current){
-    videoRef.current.srcObject = stream
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
   }
- } catch(error){
-  console.error(error)
- }
 }
+// clean up media tracks
+useEffect(() => {
+  if(videoRef.current){
+
+    videoRef.current.srcObject =stream
+  }
+  return () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+    }
+  };
+}, [stream]);
+
+function enableCam(){
+  setCamState(true)
+  getMediaAccess()
 
 }
 
@@ -45,18 +64,19 @@ async function  requestMediaAccess(){
     <div className="bg-white pt-5 ">
       <section className="px-0">
       
-        <div className="px-10 mr-0 max-w[1440px] flex gap-[1rem] justify-between ">
+        <div className="px-10 mr-0 max-w[1440px] flex gap-[1rem] justify-between">
         
-          <div className="flex flex-col gap-[1rem]">
+          <div className="flex flex-col gap-[1rem] ">
           
             <div className="localVideo max-w-[65vw] overflow-hidden  min-h-[75vh] relative bg-off-white">
               {camState == true ? (<video  ref={videoRef}  playsInline={true} autoPlay={true} className=" h-full w-full" controls></video>) :
                 ''}
-            <button className="absolute bottom-[10px] right-[30px] z-10 " onClick={disableCam}>disable </button>
-            <button className="absolute bottom-[10px] left-[10px] z-10 " onClick={requestMediaAccess}>Allow </button>
+            <button className="absolute bottom-[40px] right-[30px] z-10 " onClick={disableCam}>disable </button>
+            <button className="absolute bottom-[40px] left-[30px] z-10 " onClick={enableCam}>enable </button>
+
             </div>
             <div className=" flex gap-[2.31rem]">
-              <div className="w-[12.0625rem] h-[6.4375rem] bg-off-white">
+              <div className="w-[12.0625rem] h-[6.4375rem] bg-off-white ">
 
               </div>
               <div className="w-[12.0625rem] h-[6.4375rem] bg-off-white"></div>
