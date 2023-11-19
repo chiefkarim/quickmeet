@@ -66,16 +66,16 @@ function enableCam(){
       
         <div className="px-10 mr-0 max-w[1440px] flex gap-[1rem] justify-between">
         
-          <div className="flex flex-col gap-[1rem] ">
+          <div className="flex flex-col gap-[1rem] max-w-[85vw] tablet:max-w-[55vw]  ">
           
-            <div className="localVideo max-w-[65vw] overflow-hidden  min-h-[75vh] relative bg-off-white">
+            <div className="localVideo tablet:w-auto w-[65vw]   min-h-[75vh] relative bg-off-white">
               {camState == true ? (<video  ref={videoRef}  playsInline={true} autoPlay={true} className=" h-full w-full" controls></video>) :
                 ''}
             <button className="absolute bottom-[40px] right-[30px] z-10 " onClick={disableCam}>disable </button>
             <button className="absolute bottom-[40px] left-[30px] z-10 " onClick={enableCam}>enable </button>
 
             </div>
-            <div className=" flex gap-[2.31rem]">
+            <div className=" flex gap-[1rem] w-full justify-between ">
               <div className="w-[12.0625rem] h-[6.4375rem] bg-off-white ">
 
               </div>
