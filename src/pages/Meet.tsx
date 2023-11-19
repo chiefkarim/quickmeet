@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from "react";
 function Meet() {
   const [stream,setStream] = useState<null | MediaStream>(null)
   const [screenWidth,setScreenWidth] = useState<null | number>(null)
+  const [camState,setCamState] = useState(true)
   const videoRef =useRef< null | HTMLVideoElement>(null)
 
 useEffect(()=>{
@@ -13,8 +14,21 @@ useEffect(()=>{
 setScreenWidth(window.innerWidth)
   }
   window.addEventListener('resize',updateScreenWidth);
+
+// clean up media tracks and event listener
+return () => {
+ window.removeEventListener('resize',updateScreenWidth)
+ const tracks = stream?.getTracks()
+ tracks && tracks.forEach((track)=> track.stop())
+}
+},[screenWidth])
+
+function disableCam(){
+  setCamState(false)
+}
 //Get user media
-(async()=>{
+
+async function  requestMediaAccess(){
   try{
    const mediaStream = await navigator.mediaDevices.getUserMedia({audio:true,video:{ facingMode:"user",width:screenWidth || 883,height:{min:402}}})
   setStream(mediaStream)
@@ -25,14 +39,7 @@ setScreenWidth(window.innerWidth)
   console.error(error)
  }
 
-})()
-// clean up media tracks and event listner
-return () => {
- window.removeEventListener('resize',updateScreenWidth)
- const tracks = stream?.getTracks()
- tracks && tracks.forEach((track)=> track.stop())
 }
-},[screenWidth])
 
   return (
     <div className="bg-white pt-5 ">
@@ -42,8 +49,11 @@ return () => {
         
           <div className="flex flex-col gap-[1rem]">
           
-            <div className="localVideo max-w-[65vw] overflow-hidden  min-h-[75vh]  bg-off-white">
-            <video ref={videoRef} autoPlay={true} playsInline={true} controls className="h-full w-full"></video>
+            <div className="localVideo max-w-[65vw] overflow-hidden  min-h-[75vh] relative bg-off-white">
+              {camState == true ? (<video  ref={videoRef}  playsInline={true}  className=" h-full w-full" controls></video>) :
+                ''}
+            <button className="absolute bottom-[10px] right-[30px] z-10 " onClick={disableCam}>disable </button>
+            <button className="absolute bottom-[10px] left-[10px] z-10 " onClick={requestMediaAccess}>Allow </button>
             </div>
             <div className=" flex gap-[2.31rem]">
               <div className="w-[12.0625rem] h-[6.4375rem] bg-off-white">
