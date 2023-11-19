@@ -33,7 +33,7 @@ async function  requestMediaAccess(){
    const mediaStream = await navigator.mediaDevices.getUserMedia({audio:true,video:{ facingMode:"user",width:screenWidth || 883,height:{min:402}}})
   setStream(mediaStream)
   if(videoRef.current){
-    videoRef.current.srcObject = mediaStream
+    videoRef.current.srcObject = stream
   }
  } catch(error){
   console.error(error)
