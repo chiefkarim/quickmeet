@@ -13,7 +13,7 @@ useEffect(()=>{
 setScreenWidth(window.innerWidth)
   }
   window.addEventListener('resize',updateScreenWidth);
-//Get user mmdia
+//Get user media
 (async()=>{
   try{
    const mediaStream = await navigator.mediaDevices.getUserMedia({audio:true,video:{ facingMode:"user",width:screenWidth || 883,height:{min:402}}})
