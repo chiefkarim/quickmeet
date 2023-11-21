@@ -14,7 +14,7 @@ const router = createBrowserRouter([
     element: <Index />,
   },
   {
-    path: "/meet",
+    path: "/meet/:id",
     element: <Meet />,
   },
 ]);

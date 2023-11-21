@@ -7,7 +7,6 @@ const GoogleAuth = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get("code");
 
-
   const redirect = () => {
     setInterval(() => {
       window.location.href = "/";
@@ -17,7 +16,7 @@ const GoogleAuth = () => {
   const handleLogin = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/user/login?code=${code}`
+        `https://quickmeet.centralindia.cloudapp.azure.com/user/login?code=${code}`
       );
       const data = await response.json();
 
