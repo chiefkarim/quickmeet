@@ -1,19 +1,23 @@
 import easy from "../assets/images/easy.svg";
 import send from "../assets/images/send.svg";
 import uploadPhoto from "../assets/images/photo.svg";
-import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { Socket } from "socket.io-client";
 
-const MessagingBoard = () => {
+interface MessagingBoard {
+  socket: Socket | null;
+  roomID: string | undefined;
+}
+
+const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
   const [messages, setMessages] = useState<string[]>([]);
   const [yourMessage, setYourMessage] = useState<string>();
-  const [socket, setSocket] = useState<null | Socket>(null);
-  const params = useParams();
-  const roomID = params.id;
 
-  console.log(messages);
+  useEffect(() => {
+    socket?.on("msg-to-client", (message) => {
+      setMessages((messages) => [...messages, message]);
+    });
+  }, [socket]);
 
   const sendMessage = async () => {
     if (yourMessage) {
@@ -24,21 +28,6 @@ const MessagingBoard = () => {
   const handleChange = (e: any) => {
     setYourMessage(e.target.value);
   };
-
-  useEffect(() => {
-    const s = io("http://localhost:3000");
-
-    s.on("connect", () => {
-      setSocket(s);
-      s.emit("join", { roomID });
-
-      s.on("msg-to-client", (message) => {
-        setMessages((messages) => [...messages, message]);
-      });
-
-      return () => s.disconnect();
-    });
-  }, []);
 
   return (
     <div className=" h-stretch bg-off-white flex flex-col overflow-hidden justify-between">
