@@ -15,9 +15,9 @@ const GoogleAuth = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch(
-        `https://quickmeet.centralindia.cloudapp.azure.com/user/login?code=${code}`
-      );
+      const URL = import.meta.env.VITE_BACKEND_URL;
+
+      const response = await fetch(`${URL}/user/login?code=${code}`);
       const data = await response.json();
 
       if (response.status === 200) {
