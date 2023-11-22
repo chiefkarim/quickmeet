@@ -12,7 +12,6 @@ interface MessagingBoard {
 const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
   const [messages, setMessages] = useState<string[]>([]);
   const [yourMessage, setYourMessage] = useState<string>();
-
   useEffect(() => {
     socket?.on("msg-to-client", (message) => {
       setMessages((messages) => [...messages, message]);
@@ -27,29 +26,33 @@ const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
 
   const handleChange = (e: any) => {
     setYourMessage(e.target.value);
+
   };
 
   return (
-    <div className=" h-stretch bg-off-white flex flex-col overflow-hidden justify-between">
-      <div className="messages rounded-[8px] my-[1.38rem] ml-[0.38rem] mr-[1rem] flex  ">
+    <div className=" max-h-[90vh] bg-off-white w-full  flex flex-col overflow-hidden justify-between">
+      <div className="messages rounded-[8px] my-[1.38rem] ml-[0.38rem] mr-[1rem] flex flex-col overflow-scroll  ">
+      {messages &&
+            messages.map((message) => (
+             
+                <div className="message flex" key={crypto.randomUUID()}>
         <img
           src={easy}
           className="h-[2.7rem] w-[2.7rem] inline-block rounded-[16px] mx-[1rem] "
         />
         <div className=" bg-white w-full py-[0.56rem] px-[0.81rem] inline-block mt-[1.35rem]">
           <p className="text-[0.8125rem] opacity-100">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </p>
+          {message}          </p>
           <p className="text-[0.625rem] text-light-grey opacity-[0.8] block text-end ">
             time
           </p>
-          {messages &&
-            messages.map((message) => (
-              <li key={crypto.randomUUID()} className="text-black text-lg">
-                {message}
-              </li>
-            ))}
+          
         </div>
+        </div>
+                
+              
+            ))}
+        
       </div>
       <div className="userInputMessage  relative m-[1.38rem] rounded-[8px] ">
         <input
