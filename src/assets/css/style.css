@@ -33,7 +33,13 @@ p{
   padding-left: 0;
   padding-right: 0;
 }
-
+.black-gradient-hover {
+  background-color: transparent;
+  transition: background-color 0.3s ease-in-out;
+  &:hover {
+    background-image: linear-gradient(to right, #000000, rgba(0, 0, 0, 0));
+  }
+}
 h1{
   font-size: 2.8125rem;
   line-height: 150.6%;

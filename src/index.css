@@ -494,20 +494,14 @@ video {
 .relative {
   position: relative;
 }
-.bottom-\[40px\] {
-  bottom: 40px;
+.bottom-0 {
+  bottom: 0px;
 }
 .left-0 {
   left: 0px;
 }
-.left-\[30px\] {
-  left: 30px;
-}
 .right-0 {
   right: 0px;
-}
-.right-\[30px\] {
-  right: 30px;
 }
 .top-0 {
   top: 0px;
@@ -589,18 +583,6 @@ video {
 .h-full {
   height: 100%;
 }
-.max-h-\[400px\] {
-  max-height: 400px;
-}
-.max-h-full {
-  max-height: 100%;
-}
-.max-h-\[full\] {
-  max-height: full;
-}
-.max-h-\[\] {
-  max-height: ;
-}
 .max-h-\[90vh\] {
   max-height: 90vh;
 }
@@ -670,6 +652,9 @@ video {
 .border-2 {
   border-width: 2px;
 }
+.border-none {
+  border-style: none;
+}
 .border-green {
   --tw-border-opacity: 1;
   border-color: rgb(24 129 112 / var(--tw-border-opacity));
@@ -678,13 +663,13 @@ video {
   --tw-border-opacity: 1;
   border-color: rgb(129 24 112 / var(--tw-border-opacity));
 }
+.bg-extra-light-grey {
+  --tw-bg-opacity: 1;
+  background-color: rgb(218 227 234 / var(--tw-bg-opacity));
+}
 .bg-green {
   --tw-bg-opacity: 1;
   background-color: rgb(24 129 112 / var(--tw-bg-opacity));
-}
-.bg-off-white {
-  --tw-bg-opacity: 1;
-  background-color: rgb(239 239 239 / var(--tw-bg-opacity));
 }
 .bg-transparent {
   background-color: transparent;
@@ -693,9 +678,8 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
-.bg-black {
-  --tw-bg-opacity: 1;
-  background-color: rgb(37 49 60 / var(--tw-bg-opacity));
+.bg-opacity-0 {
+  --tw-bg-opacity: 0;
 }
 .px-0 {
   padding-left: 0px;
@@ -704,6 +688,10 @@ video {
 .px-10 {
   padding-left: 2.5rem;
   padding-right: 2.5rem;
+}
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 .px-\[0\.81rem\] {
   padding-left: 0.81rem;
@@ -716,6 +704,10 @@ video {
 .px-\[3rem\] {
   padding-left: 3rem;
   padding-right: 3rem;
+}
+.px-\[40px\] {
+  padding-left: 40px;
+  padding-right: 40px;
 }
 .px-\[45px\] {
   padding-left: 45px;
@@ -813,6 +805,14 @@ video {
 .opacity-\[0\.8\] {
   opacity: 0.8;
 }
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.duration-300 {
+  transition-duration: 300ms;
+}
 
 p{
   display: inline;
@@ -844,7 +844,13 @@ p{
   padding-left: 0;
   padding-right: 0;
 }
-
+.black-gradient-hover {
+  background-color: transparent;
+  transition: background-color 0.3s ease-in-out;
+}
+.black-gradient-hover:hover {
+    background-image: linear-gradient(to right, #000000, rgba(0, 0, 0, 0));
+  }
 h1{
   font-size: 2.8125rem;
   line-height: 150.6%;
