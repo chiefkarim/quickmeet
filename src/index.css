@@ -924,6 +924,11 @@ opacity: 0.7;
 }
 
 
+.hover\:cursor-pointer:hover {
+  cursor: pointer;
+}
+
+
 @media (max-width: 991px) {
 
   .tablet\:-ml-\[30px\] {

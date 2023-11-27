@@ -1,29 +1,27 @@
 import { getGoogleUrl } from "../utils/getGoogleUrls";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const GoogleAuth = () => {
   const token = localStorage.getItem("google-token");
   const url = getGoogleUrl();
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get("code");
-
-  const redirect = () => {
-    setInterval(() => {
-      window.location.href = "/";
-    }, 4000);
-  };
+  const navigate = useNavigate()
+  
 
   const handleLogin = async () => {
     try {
       const URL = import.meta.env.VITE_BACKEND_URL;
+      console.log("handellogin")
 
       const response = await fetch(`${URL}/user/login?code=${code}`);
       const data = await response.json();
 
       if (response.status === 200) {
-        alert("user successfully logged In");
+        
         localStorage.setItem("google-token", data.token);
-        redirect();
+        navigate("/");
       } else if (response.status === 500 || response.status === 400) {
         console.log(data.error);
       }
@@ -34,6 +32,9 @@ const GoogleAuth = () => {
 
   const logout = async () => {
     // remove token from local storage
+    localStorage.removeItem("google-token");
+    console.log('loged out')
+    console.log("hello")
   };
 
   useState(() => {
@@ -45,8 +46,9 @@ const GoogleAuth = () => {
     <>
       {token ? (
         <a
+        href="/"
           onClick={logout}
-          className="py-[10px] px-[50px] tablet:px-[30px] mobile:text-white border-purple border-2 rounded-[8px] "
+          className="py-[10px] px-[50px] tablet:px-[30px] hover:cursor-pointer mobile:text-white border-purple border-2 rounded-[8px] "
         >
           logout
         </a>
