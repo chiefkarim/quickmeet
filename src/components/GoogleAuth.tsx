@@ -13,7 +13,6 @@ const GoogleAuth = () => {
   const handleLogin = async () => {
     try {
       const URL = import.meta.env.VITE_BACKEND_URL;
-      console.log("handellogin")
 
       const response = await fetch(`${URL}/user/login?code=${code}`);
       const data = await response.json();

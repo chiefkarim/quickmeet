@@ -6,30 +6,59 @@ import MicOff from "../assets/images/micOff.svg?react"
 import  FullScreen from "../assets/images/fullscreen.svg?react"
 
 
-function LocalCam() {
+function LocalCam({camera,mice}:{camera:boolean,mice:boolean}) {
   const [stream, setStream] = useState<null | MediaStream>(null);
   const [screenWidth, setScreenWidth] = useState<null | number>(null);
-  const [cam, setCam] = useState(false);
-  const [audio, setAudio] = useState(false)
+  const [cam, setCam] = useState<boolean | null>(camera);
+  const [audio, setAudio] = useState<boolean | null>(mice)
   const videoRef = useRef<null | HTMLVideoElement>(null);
 
   //gets the userMedia
-  async function getMediaAccess(){
+  async function getMediaAccess(input:string){
     if (
       "mediaDevices" in navigator &&
       "getUserMedia" in navigator.mediaDevices
     ) {
-      try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
+      let requestedMedia = null
+      if (input == "audio"){
+        if(cam == true){
+          requestedMedia = {audio:true,video: {
+            facingMode: "user",
+            width: screenWidth || 883,
+            height: { min: 402 },
+          }}
+        }else{
+          requestedMedia={audio: true}
+        }
+      }else if(input == "video"){
+        if(audio ==true){
+          requestedMedia = {audio:true,video: {
+            facingMode: "user",
+            width: screenWidth || 883,
+            height: { min: 402 },
+          }}
+        }else{
+          requestedMedia = {video: {
+           facingMode: "user",
+           width: screenWidth || 883,
+           height: { min: 402 },
+         }}
+        }
+      }else{
+        requestedMedia = {
           audio: true,
           video: {
             facingMode: "user",
             width: screenWidth || 883,
             height: { min: 402 },
           },
-        });
+        }
+      }
+      try {
+        const mediaStream = await navigator.mediaDevices.getUserMedia(requestedMedia);
         setStream(mediaStream);
         if (videoRef.current) {
+          console.log(videoRef.current.srcObject)
           videoRef.current.srcObject = stream;
           return true
         }
@@ -49,7 +78,7 @@ function LocalCam() {
     };
     window.addEventListener("resize", updateScreenWidth);
 
-    getMediaAccess().then(()=>{setCam(true);
+    getMediaAccess("all").then(()=>{setCam(true);
     setAudio(true) }) 
 
     // clean up event listener
@@ -75,7 +104,7 @@ function LocalCam() {
       stream.getAudioTracks().forEach((track) => track.stop())
       setAudio(false)
     }else{
-      getMediaAccess().then(()=>{setAudio(true)})
+      getMediaAccess("audio").then(()=>{setAudio(true)})
     }
   }
 
@@ -84,7 +113,7 @@ function LocalCam() {
       stream.getVideoTracks().forEach((track) => track.stop());
       setCam(false);
     } else {
-      getMediaAccess().then(()=>{setCam(true)}) 
+      getMediaAccess("video").then(()=>{setCam(true)}) 
 
     }
   }
@@ -105,7 +134,7 @@ function LocalCam() {
 }
 
   return (
-    <div className="relative localCam">
+    <div className="relative localCam h-full">
       
         <video
           ref={videoRef}
@@ -114,7 +143,7 @@ function LocalCam() {
           className=" h-full w-full"
           controls={false}
         ></video>
-     <div className="absolute flex w-full bottom-0 justify-between hover:black-gradient transition-all duration-300">
+     <div className="absolute flex w-full bottom-0 justify-between black-gradient-hover">
       <div>
       <button
         className=" bg-transparent text-white  "

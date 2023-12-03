@@ -36,8 +36,12 @@ p{
 .black-gradient-hover {
   background-color: transparent;
   transition: background-color 0.3s ease-in-out;
+  -webkit-transition: background-color 0.3s ease-in-out;
+  -moz-transition: background-color 0.3s ease-in-out;
+  -ms-transition: background-color 0.3s ease-in-out;
+  -o-transition: background-color 0.3s ease-in-out;
   &:hover {
-    background-image: linear-gradient(to right, #000000, rgba(0, 0, 0, 0));
+    background-image: linear-gradient(to top, #000000, rgba(0, 0, 0, 0.1));
   }
 }
 h1{
@@ -94,9 +98,7 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
-  border-color: #646cff;
-}
+
 
 
 @media (prefers-color-scheme: light) {
