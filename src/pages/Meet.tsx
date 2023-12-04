@@ -8,23 +8,20 @@ import { io } from "socket.io-client";
 import { Socket } from "socket.io-client";
 function Meet() {
   const [socket, setSocket] = useState<null | Socket>(null);
-
   const URL = import.meta.env.VITE_BACKEND_URL;
   const params = useParams();
   const roomID = params.id;
-  const userID = localStorage.getItem("guestID")
-  const meetingID = localStorage.getItem("meetingID")
-  const roomType = localStorage.getItem("roomType")
+  const roomDetails = JSON.parse(localStorage.getItem("roomDetails") || "null")
+  const {userID,meetingID,roomType,role} = roomDetails
   const [cam, ] = useState<boolean>(false);
   const [audio, ] = useState<boolean>(false)
-
   useEffect(() => {
     const s = io(URL);
-
     s.on("connect", () => {
       setSocket(s);
-      s.emit("join", { roomID ,userID ,meetingID ,roomType })
-
+      console.log(roomDetails)
+      
+      s.emit("join-host", { roomID ,userID ,meetingID ,roomType ,role})
       return () => s.disconnect();
     });
   }, []);

@@ -20,6 +20,22 @@ const GoogleAuth = () => {
       if (response.status === 200) {
         
         localStorage.setItem("google-token", data.token);
+        const token = localStorage.getItem("google-token")
+        if(token != null ){
+          try{
+
+            const response = await fetch(`${URL}/user/me`,{headers:{Authorization:token}})
+          
+          const data = await response.json();
+          if (response.status === 200) {
+            localStorage.setItem("userInformation", JSON.stringify(data));
+          }else if (response.status === 500 || response.status === 400) {
+            console.log(data.error);
+          }}catch(error){
+            console.log(error)
+          }
+
+        }
         navigate("/");
       } else if (response.status === 500 || response.status === 400) {
         console.log(data.error);
