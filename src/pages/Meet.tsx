@@ -39,9 +39,13 @@ function Meet() {
         }else{
           //get the userID and save it incase of a disconnection and use it to reconnect
           s.emit("join", { userType:"guest",roomID })
-
+          
         }
-      s.on("error",(error)=>{
+        s.on("join-response", (data)=>{
+          console.log(data)
+          localStorage.setItem("roomDetails",JSON.stringify(data))
+        })
+        s.on("error",(error)=>{
         console.log(error)
       })
       }

@@ -33,7 +33,6 @@ const  CreateMeeting=()=>{
                 navigate(`/meet/${data.roomID}`)
             }
     }
-        createMeet();
    
     
 

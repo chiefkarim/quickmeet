@@ -48,6 +48,10 @@ const GoogleAuth = () => {
   const logout = async () => {
     // remove token from local storage
     localStorage.removeItem("google-token");
+    localStorage.removeItem("roomDetails");
+    localStorage.removeItem("userInformation");
+
+    
     console.log('loged out')
     console.log("hello")
   };
