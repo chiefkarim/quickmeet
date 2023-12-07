@@ -38,7 +38,7 @@ function LocalCam({camera,mice}:{camera:boolean,mice:boolean}) {
     return () => {
       window.removeEventListener("resize", updateScreenWidth);
     };
-  }, [screenWidth]);
+  }, [screenWidth])
 
   // clean up media tracks
   useEffect(() => {

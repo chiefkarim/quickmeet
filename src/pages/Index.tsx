@@ -9,8 +9,10 @@ import easySVG from "../assets/images/easy.svg";
 import welcomeSVG from "../assets/images/welcome.svg";
 import CreateMeeting from "../components/CreateMeeting";
 
+
 function Index() {
 
+  
   return (
     <div className="bg-white">
       <section className=" header  overflow-hidden ">
@@ -28,9 +30,8 @@ function Index() {
                 be saved.
               </p>
               <div className="flex tablet:flex-wrap tablet:items-start items-center mt-[70px] tablet:mt-[50px] gap-[30px] tablet:gap-[15px]">
-                <button onClick={CreateMeeting} className="bg-green  text-[14px] tablet:text-[12px] tablet:px-[10px] px-[18px] py-[11px] text-white">
-                  New Meeting
-                </button>
+               <CreateMeeting/>
+                
                 <div className="tablet:flex tablet:gap-[15px] tablet:items-center ">
                 <input
                   type="text"
