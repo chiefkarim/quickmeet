@@ -11,17 +11,40 @@ function Meet() {
   const URL = import.meta.env.VITE_BACKEND_URL;
   const params = useParams();
   const roomID = params.id;
+  const googleToken = localStorage.getItem("google-token")
   const roomDetails = JSON.parse(localStorage.getItem("roomDetails") || "null")
-  const {userID,meetingID,roomType,role} = roomDetails
   const [cam, ] = useState<boolean>(false);
   const [audio, ] = useState<boolean>(false)
   useEffect(() => {
     const s = io(URL);
     s.on("connect", () => {
       setSocket(s);
-      console.log(roomDetails)
-      
-      s.emit("join-host", { roomID ,userID ,meetingID ,roomType ,role})
+      console.log(`Room details ${googleToken}`);
+      if(googleToken != null){
+        const {userID,meetingID,roomType,role} = roomDetails
+      if(role && role == "host"){
+        if(roomID != roomDetails.roomID){
+          s.emit("join", { roomID ,userID ,meetingID ,roomType ,role:"attendee"})
+        }else{
+          s.emit("join", { roomID ,userID ,meetingID ,roomType ,role})
+        }
+      }        
+
+      }else{
+        if(roomDetails!=null){
+          const {role,userID,meetingID,roomType} = roomDetails
+  console.log(role,userID,meetingID)
+          s.emit("join", { role,userID,roomID,userType:"guest",meetingID,roomType })
+
+        }else{
+          //get the userID and save it incase of a disconnection and use it to reconnect
+          s.emit("join", { userType:"guest",roomID })
+
+        }
+      s.on("error",(error)=>{
+        console.log(error)
+      })
+      }
       return () => s.disconnect();
     });
   }, []);

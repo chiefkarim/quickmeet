@@ -4,8 +4,9 @@ import CamOff from "../assets/images/camOff.svg?react"
 import MicOn from "../assets/images/micOn.svg?react"
 import MicOff from "../assets/images/micOff.svg?react"
 import  FullScreen from "../assets/images/fullscreen.svg?react"
+import getMediaAccess from "../utils/getMediaAccess";
 
-
+//export getMediaAccess and use it on the load of meeting page(put it in utils folder)
 function LocalCam({camera,mice}:{camera:boolean,mice:boolean}) {
   const [stream, setStream] = useState<null | MediaStream>(null);
   const [screenWidth, setScreenWidth] = useState<null | number>(null);
@@ -14,71 +15,23 @@ function LocalCam({camera,mice}:{camera:boolean,mice:boolean}) {
   const videoRef = useRef<null | HTMLVideoElement>(null);
 
   //gets the userMedia
-  async function getMediaAccess(input:string){
-    if (
-      "mediaDevices" in navigator &&
-      "getUserMedia" in navigator.mediaDevices
-    ) {
-      let requestedMedia = null
-      if (input == "audio"){
-        if(cam == true){
-          requestedMedia = {audio:true,video: {
-            facingMode: "user",
-            width: screenWidth || 883,
-            height: { min: 402 },
-          }}
-        }else{
-          requestedMedia={audio: true}
-        }
-      }else if(input == "video"){
-        if(audio ==true){
-          requestedMedia = {audio:true,video: {
-            facingMode: "user",
-            width: screenWidth || 883,
-            height: { min: 402 },
-          }}
-        }else{
-          requestedMedia = {video: {
-           facingMode: "user",
-           width: screenWidth || 883,
-           height: { min: 402 },
-         }}
-        }
-      }else{
-        requestedMedia = {
-          audio: true,
-          video: {
-            facingMode: "user",
-            width: screenWidth || 883,
-            height: { min: 402 },
-          },
-        }
-      }
-      try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia(requestedMedia);
-        setStream(mediaStream);
-        if (videoRef.current) {
-          console.log(videoRef.current.srcObject)
-          videoRef.current.srcObject = stream;
-          return true
-        }
-      } catch (error) {
-        
-        console.error(error);
-        return false
-      }
-    }
-    return false
-  }
-
+  
   useEffect(() => {
+    //make it into a function and export it
     //responsive video
     const updateScreenWidth = () => {
       setScreenWidth(window.innerWidth);
     };
     window.addEventListener("resize", updateScreenWidth);
-
-    getMediaAccess("all").then(()=>{setCam(true);
+// pass input,cam,audio as arguments
+    getMediaAccess({input:"all",cam:cam,audio:audio}).then((MediaStream)=>{
+      if(typeof MediaStream != "boolean"){
+        setStream(MediaStream)
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      }
+      setCam(true);
     setAudio(true) }) 
 
     // clean up event listener
@@ -104,7 +57,15 @@ function LocalCam({camera,mice}:{camera:boolean,mice:boolean}) {
       stream.getAudioTracks().forEach((track) => track.stop())
       setAudio(false)
     }else{
-      getMediaAccess("audio").then(()=>{setAudio(true)})
+      getMediaAccess({input:"audio",cam:cam,audio:audio}).then((MediaStream)=>{
+        if(typeof MediaStream != "boolean"){
+          setStream(MediaStream)
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        }
+      setAudio(true) }) 
+      
     }
   }
 
@@ -113,7 +74,16 @@ function LocalCam({camera,mice}:{camera:boolean,mice:boolean}) {
       stream.getVideoTracks().forEach((track) => track.stop());
       setCam(false);
     } else {
-      getMediaAccess("video").then(()=>{setCam(true)}) 
+      getMediaAccess({input:"video",cam:cam,audio:audio}).then((MediaStream)=>{
+        if(typeof MediaStream != "boolean"){
+          setStream(MediaStream)
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        }
+        setCam(true);
+      }) 
+      
 
     }
   }
