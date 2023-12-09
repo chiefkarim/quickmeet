@@ -7,8 +7,8 @@ import  FullScreen from "../assets/images/fullscreen.svg?react"
 import getMediaAccess from "../utils/getMediaAccess";
 
 //export getMediaAccess and use it on the load of meeting page(put it in utils folder)
-function LocalCam({camera,mice}:{camera:boolean,mice:boolean}) {
-  const [stream, setStream] = useState<null | MediaStream>(null);
+function LocalCam({camera,mice,Stream,autoRun}:{camera:boolean,mice:boolean,Stream:MediaStream | null,autoRun:boolean}) {
+  const [stream, setStream] = useState<null | MediaStream>(Stream);
   const [screenWidth, setScreenWidth] = useState<null | number>(null);
   const [cam, setCam] = useState<boolean | null>(camera);
   const [audio, setAudio] = useState<boolean | null>(mice)
@@ -24,7 +24,7 @@ function LocalCam({camera,mice}:{camera:boolean,mice:boolean}) {
     };
     window.addEventListener("resize", updateScreenWidth);
 // pass input,cam,audio as arguments
-    getMediaAccess({input:"all",cam:cam,audio:audio}).then((MediaStream)=>{
+   if(autoRun == true){ getMediaAccess({input:"all",cam:cam,audio:audio}).then((MediaStream)=>{
       if(typeof MediaStream != "boolean"){
         setStream(MediaStream)
         if (videoRef.current) {
@@ -32,7 +32,7 @@ function LocalCam({camera,mice}:{camera:boolean,mice:boolean}) {
         }
       }
       setCam(true);
-    setAudio(true) }) 
+    setAudio(true) })} 
 
     // clean up event listener
     return () => {

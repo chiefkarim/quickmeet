@@ -8,10 +8,22 @@ import transparencySVG from "../assets/images/transparency.svg";
 import easySVG from "../assets/images/easy.svg";
 import welcomeSVG from "../assets/images/welcome.svg";
 import CreateMeeting from "../components/CreateMeeting";
-
+import { ChangeEvent, useState } from "react";
 
 function Index() {
+  const [meetingURL, setMeetingURL] = useState<null | string>("/")
 
+function handelChange(e: ChangeEvent<HTMLInputElement>){
+  let url;
+  console.log(e)
+  if (e.target.value.startsWith("https://")){
+  url = e.target.value
+  }else{
+    url = "https://"+ e.target.value
+  }
+  
+setMeetingURL(url)
+}
   
   return (
     <div className="bg-white">
@@ -35,10 +47,11 @@ function Index() {
                 <div className="tablet:flex tablet:gap-[15px] tablet:items-center ">
                 <input
                   type="text"
+                  onChange={(e)=>{handelChange(e)}}
                   className="border-2   text-[14px] tablet:text-[12px] tablet:px-[10px] px-[18px] py-[11px] bg-white text-black rounded-md"
                   placeholder="Enter Link"
                 />
-                <a href="#" className="text-light-grey tablet:text-[12px] ">
+                <a href={meetingURL}  className="text-light-grey tablet:text-[12px] ">
                   Join
                 </a>
                 </div>
