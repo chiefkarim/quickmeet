@@ -13,18 +13,18 @@ import { ChangeEvent, useState } from "react";
 function Index() {
   const [meetingURL, setMeetingURL] = useState<null | string>("/")
 
-function handelChange(e: ChangeEvent<HTMLInputElement>){
-  let url;
-  console.log(e)
-  if (e.target.value.startsWith("https://")){
-  url = e.target.value
-  }else{
-    url = "https://"+ e.target.value
+  function handelChange(e: ChangeEvent<HTMLInputElement>) {
+    let url;
+    console.log(e)
+    if (e.target.value.startsWith("https://")) {
+      url = e.target.value
+    } else {
+      url = "https://" + e.target.value
+    }
+
+    setMeetingURL(url)
   }
-  
-setMeetingURL(url)
-}
-  
+
   return (
     <div className="bg-white">
       <section className=" header  overflow-hidden ">
@@ -42,18 +42,18 @@ setMeetingURL(url)
                 be saved.
               </p>
               <div className="flex tablet:flex-wrap tablet:items-start items-center mt-[70px] tablet:mt-[50px] gap-[30px] tablet:gap-[15px]">
-               <CreateMeeting/>
-                
+                <CreateMeeting />
+
                 <div className="tablet:flex tablet:gap-[15px] tablet:items-center ">
-                <input
-                  type="text"
-                  onChange={(e)=>{handelChange(e)}}
-                  className="border-2   text-[14px] tablet:text-[12px] tablet:px-[10px] px-[18px] py-[11px] bg-white text-black rounded-md"
-                  placeholder="Enter Link"
-                />
-                <a href={meetingURL}  className="text-light-grey tablet:text-[12px] ">
-                  Join
-                </a>
+                  <input
+                    type="text"
+                    onChange={(e) => { handelChange(e) }}
+                    className="border-2   text-[14px] tablet:text-[12px] tablet:px-[10px] px-[18px] py-[11px] bg-white text-black rounded-md"
+                    placeholder="Enter Link"
+                  />
+                  <a href={meetingURL} className="text-light-grey tablet:text-[12px] ">
+                    Join
+                  </a>
                 </div>
               </div>
             </div>
@@ -81,7 +81,7 @@ setMeetingURL(url)
       <section className="second py-20">
         <div className="container flex mobile:flex-wrap  justify-between items-center  ">
           <div className="right  -ml-[140px] tablet:-ml-[30px] mobile:-ml-[0px]   ">
-            <img src={privacySVG}  />
+            <img src={privacySVG} />
           </div>
           <div className="left max-w-[525px]  tablet:max-w-[400px] pl-[30px] mobile:pt-10  mobile:pl-0">
             <h1 className="text-black">

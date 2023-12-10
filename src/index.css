@@ -512,9 +512,6 @@ video {
 .m-\[1\.38rem\] {
   margin: 1.38rem;
 }
-.m-auto {
-  margin: auto;
-}
 .mx-\[1rem\] {
   margin-left: 1rem;
   margin-right: 1rem;
@@ -522,14 +519,6 @@ video {
 .my-\[1\.38rem\] {
   margin-top: 1.38rem;
   margin-bottom: 1.38rem;
-}
-.my-auto {
-  margin-top: auto;
-  margin-bottom: auto;
-}
-.mx-auto {
-  margin-left: auto;
-  margin-right: auto;
 }
 .-ml-\[140px\] {
   margin-left: -140px;
@@ -552,6 +541,9 @@ video {
 .mr-\[40px\] {
   margin-right: 40px;
 }
+.mt-0 {
+  margin-top: 0px;
+}
 .mt-20 {
   margin-top: 5rem;
 }
@@ -561,20 +553,14 @@ video {
 .mt-\[12px\] {
   margin-top: 12px;
 }
+.mt-\[30px\] {
+  margin-top: 30px;
+}
 .mt-\[70px\] {
   margin-top: 70px;
 }
 .mt-\[80px\] {
   margin-top: 80px;
-}
-.mt-\[30\] {
-  margin-top: 30;
-}
-.mt-\[30px\] {
-  margin-top: 30px;
-}
-.mt-0 {
-  margin-top: 0px;
 }
 .block {
   display: block;
@@ -597,32 +583,14 @@ video {
 .h-\[6\.4375rem\] {
   height: 6.4375rem;
 }
+.h-\[70vh\] {
+  height: 70vh;
+}
 .h-\[93px\] {
   height: 93px;
 }
 .h-full {
   height: 100%;
-}
-.h-\[full\] {
-  height: full;
-}
-.h-\[\] {
-  height: ;
-}
-.h-\[50vh\] {
-  height: 50vh;
-}
-.h-\[100vh\] {
-  height: 100vh;
-}
-.h-screen {
-  height: 100vh;
-}
-.h-\[60vh\] {
-  height: 60vh;
-}
-.h-\[70vh\] {
-  height: 70vh;
 }
 .max-h-\[90vh\] {
   max-height: 90vh;
@@ -642,13 +610,6 @@ video {
 .w-full {
   width: 100%;
 }
-.w-\[\] {
-  width: ;
-}
-.w-fit {
-  width: -moz-fit-content;
-  width: fit-content;
-}
 .max-w-\[432px\] {
   max-width: 432px;
 }
@@ -660,9 +621,6 @@ video {
 }
 .resize {
   resize: both;
-}
-.flex-row {
-  flex-direction: row;
 }
 .flex-col {
   flex-direction: column;
@@ -687,9 +645,6 @@ video {
 }
 .gap-\[40px\] {
   gap: 40px;
-}
-.justify-self-center {
-  justify-self: center;
 }
 .overflow-hidden {
   overflow: hidden;
@@ -810,6 +765,9 @@ video {
 .pl-\[50px\] {
   padding-left: 50px;
 }
+.pt-0 {
+  padding-top: 0px;
+}
 .pt-40 {
   padding-top: 10rem;
 }
@@ -818,9 +776,6 @@ video {
 }
 .pt-\[30px\] {
   padding-top: 30px;
-}
-.pt-0 {
-  padding-top: 0px;
 }
 .text-left {
   text-align: left;
