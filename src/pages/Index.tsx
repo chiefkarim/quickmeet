@@ -11,7 +11,7 @@ import CreateMeeting from "../components/CreateMeeting";
 import { ChangeEvent, useState } from "react";
 
 function Index() {
-  const [meetingURL, setMeetingURL] = useState<null | string>("/")
+  const [meetingURL, setMeetingURL] = useState<string | undefined>("/")
 
   function handelChange(e: ChangeEvent<HTMLInputElement>) {
     let url;

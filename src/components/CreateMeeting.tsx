@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { useAppSelector, useAppDispatch } from '../redux/hooks'
+import { SetRoom } from "../redux/roomReducer";
 
 const CreateMeeting = () => {
     const url = import.meta.env.VITE_BACKEND_URL;
@@ -6,7 +8,8 @@ const CreateMeeting = () => {
     const navigate = useNavigate()
     let response;
     let params = {}
-
+    const room = useAppSelector(state => state.room)
+    const dispatch = useAppDispatch()
     const createMeet = async () => {
         if (googleToken != null && localStorage.getItem("userInformation") != null) {
             const userInformation = JSON.parse(localStorage.getItem("userInformation") || "")
@@ -28,8 +31,9 @@ const CreateMeeting = () => {
                 const userInformation = JSON.parse(localStorage.getItem("userInformation") || data.userID)
                 data.userID = userInformation["user_id"]
             }
-            localStorage.setItem("roomDetails", JSON.stringify(data))
-            console.log(localStorage.getItem("roomDetails"))
+            dispatch(SetRoom(data))
+            console.log("room",room)
+            
             navigate(`/meet/${data.roomID}`)
         }
     }

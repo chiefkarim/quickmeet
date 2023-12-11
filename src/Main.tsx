@@ -3,7 +3,8 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Meet from "./pages/Meet.tsx";
 import Index from "./pages/Index.tsx";
-
+import { Provider } from "react-redux";
+import state from "./redux/store.ts"
 const router = createBrowserRouter([
   {
     path: "/",
@@ -19,5 +20,7 @@ const router = createBrowserRouter([
   },
 ]);
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <RouterProvider router={router} />
+  <Provider store={state}>
+    <RouterProvider router={router} />
+  </Provider>
 );

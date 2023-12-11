@@ -2,6 +2,8 @@ import { getGoogleUrl } from "../utils/getGoogleUrls";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+
+
 const GoogleAuth = () => {
   const token = localStorage.getItem("google-token");
   const url = getGoogleUrl();
@@ -29,6 +31,7 @@ const GoogleAuth = () => {
           const data = await response.json();
           if (response.status === 200) {
             localStorage.setItem("userInformation", JSON.stringify(data));
+            
           }else if (response.status === 500 || response.status === 400) {
             console.log(data.error);
           }}catch(error){
