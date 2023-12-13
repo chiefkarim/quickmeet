@@ -9,7 +9,7 @@ import easySVG from "../assets/images/easy.svg";
 import welcomeSVG from "../assets/images/welcome.svg";
 import CreateMeeting from "../components/CreateMeeting";
 import { ChangeEvent, useState } from "react";
-
+//display error message if the server is down
 function Index() {
   const [meetingURL, setMeetingURL] = useState<string | undefined>("/")
 

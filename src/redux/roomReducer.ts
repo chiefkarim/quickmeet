@@ -24,7 +24,7 @@ export const roomSlice = createSlice({
     reducers: {
         SetRoom: (state, action) => {
             console.log("room", action.payload)
-            return {state, ...action.payload }
+            return {...state, ...action.payload }
         },
         DeleteRoom: () => {
             return  {

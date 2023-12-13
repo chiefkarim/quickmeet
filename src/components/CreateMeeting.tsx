@@ -31,6 +31,8 @@ const CreateMeeting = () => {
                 const userInformation = JSON.parse(localStorage.getItem("userInformation") || data.userID)
                 data.userID = userInformation["user_id"]
             }
+            localStorage.setItem("roomDetails", JSON.stringify(data));
+
             dispatch(SetRoom(data))
             console.log("room",room)
             
