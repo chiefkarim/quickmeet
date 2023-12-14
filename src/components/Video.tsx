@@ -9,7 +9,7 @@ import { v4 as uuid } from "uuid"
 
 //export getMediaAccess and use it on the load of meeting page(put it in utils folder)
 function Video({ id, Stream, autoRun, updateStream }: { id: string | null, Stream: MediaStream | null, autoRun: boolean, updateStream: (action: string, stream: MediaStream, id: string | null) => void }) {
-  const [stream, setStream] = useState<null | MediaStream>(() => { return Stream });
+  const [stream, setStream] = useState<null | MediaStream>( Stream );
   const [screenWidth, setScreenWidth] = useState<null | number>(null);
   const [cam, setCam] = useState<boolean | null>(null);
   const [audio, setAudio] = useState<boolean | null>(null)
@@ -39,8 +39,8 @@ function Video({ id, Stream, autoRun, updateStream }: { id: string | null, Strea
       getMediaAccess({ input: "all", cam: cam, audio: audio }).then((MediaStream) => {
         if (typeof MediaStream != "boolean") {
           setStream(() => { return MediaStream })
-          console.log("set")
-          updateStream("setLocal", MediaStream, id)
+          
+          updateStream("set", MediaStream, id)
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
           }
@@ -75,14 +75,14 @@ function Video({ id, Stream, autoRun, updateStream }: { id: string | null, Strea
       });
       setStream(() => { return modifiedStream })
       setAudio(false)
-      updateStream("setLocal", modifiedStream, id)
+      updateStream("set", modifiedStream, id)
 
 
     } else {
       getMediaAccess({ input: "audio", cam: cam, audio: audio }).then((MediaStream) => {
         if (typeof MediaStream != "boolean") {
           setStream(() => { return MediaStream })
-          updateStream("setLocal", MediaStream, id)
+          updateStream("set", MediaStream, id)
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
           }
@@ -104,13 +104,13 @@ function Video({ id, Stream, autoRun, updateStream }: { id: string | null, Strea
       });
       setStream(() => { return modifiedStream })
       
-      updateStream("setLocal", modifiedStream, id)
+      updateStream("set", modifiedStream, id)
       setCam(false);
     } else {
       getMediaAccess({ input: "video", cam: cam, audio: audio }).then((MediaStream) => {
         if (typeof MediaStream != "boolean") {
           setStream(() => { return MediaStream })
-          updateStream("setLocal", MediaStream, id)
+          updateStream("set", MediaStream, id)
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
           }

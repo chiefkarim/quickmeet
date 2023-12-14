@@ -19,20 +19,9 @@ function Meet() {
   const [localStreamId, setLocalStreamId] = useState<string | null>(null)
   const localStream = streams.find(item => item.id === localStreamId)?.stream || null
 
-  function updateStream(action: string, stream: MediaStream, id: string) {
+  function updateStream(action: string, stream: MediaStream, id: string | null) {
 
     if (action === "set") {
-
-      const newStreams = streams.map((item) => {
-        if (item.id === id) {
-          return { id, stream }
-        }
-        return item
-      })
-      setStreams(() => { return newStreams })
-    } else if (action === "setLocal") {
-      setLocalStreamId(id)
-
       if (streams.filter((stream) => stream.id === id).length != 0) {
 
         const newStreams = streams.map((item) => {
@@ -44,16 +33,14 @@ function Meet() {
         })
         setStreams(() => { return newStreams })
       } else {
-        setLocalStreamId(id)
-
-        setStreams((streams) => { return [...streams, { id, stream }] })
-
+        if (stream instanceof MediaStream) setLocalStreamId(id)
+        if (id) {
+          setStreams((streams) => { return [...streams, { id, stream }] })
+        } else {
+          console.error("missing id")
+        }
       }
-    } else if (action === "add") {
-
-      setStreams((streams) => [...streams, { id, stream }])
     } else if (action === "remove" && id) {
-
       const newStreams = streams.filter((item) => item.id !== id)
       setStreams(newStreams)
     }
@@ -97,10 +84,13 @@ function Meet() {
               <Video id={localStreamId} Stream={localStream} autoRun={false} updateStream={updateStream} />
             </div>
             <div className=" flex gap-[1rem] w-full justify-between ">
-              <div className="w-[12.0625rem] h-[6.4375rem] bg-extra-light-grey "></div>
-              <div className="w-[12.0625rem] h-[6.4375rem] bg-extra-light-grey"></div>
-              <div className="w-[12.0625rem] h-[6.4375rem] bg-extra-light-grey"></div>
-              <div className="w-[12.0625rem] h-[6.4375rem] bg-extra-light-grey"></div>
+              {streams.map((stream) => {
+                if (stream.id != localStreamId) {
+                  return (<div className="w-[12.0625rem] h-[6.4375rem] bg-extra-light-grey ">
+                    <Video id={stream.id} Stream={stream.stream} autoRun={false} updateStream={updateStream} />
+                  </div>)
+                }
+              })}
             </div>
           </div>
           <MessagingBoard socket={socket} roomID={roomID} />
