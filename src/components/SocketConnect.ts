@@ -27,8 +27,12 @@ export default function SocketConnect(setSocket: (socket: Socket | null) => void
             if (roomID != roomDetails.roomID) {
               
               s.emit("join", { roomID, userID, role: "attendee", userType, username })
+              s.emit("all-messages", { userID, meetingID, roomType, role, userType, username, roomID })
+              s.on("all-messages", (data)=>console.log(data))
             } else {
               s.emit("join", { roomID, userID, meetingID, roomType, role, userType, username })
+              s.emit("all-messages", { userID, meetingID, roomType, role, userType, username, roomID })
+              s.on("all-messages", (data)=>console.log(data))
             }
           }
         } else {
@@ -41,6 +45,8 @@ export default function SocketConnect(setSocket: (socket: Socket | null) => void
 
             SetRoom(roomDetails)
             s.emit("join", { userID, meetingID, roomType, role, userType, username, roomID })
+            s.emit("all-messages", { userID, meetingID, roomType, role, userType, username, roomID })
+              s.on("all-messages", (data)=>console.log(data))
           })
 
         }
@@ -55,9 +61,13 @@ export default function SocketConnect(setSocket: (socket: Socket | null) => void
               
 
               s.emit("join", { roomID, userType: "guest", })
+              s.emit("all-messages", { userID, meetingID, roomType, role, userType, username, roomID })
+              s.on("all-messages", (data)=>console.log(data))
             } else {
               
               s.emit("join", { userID, meetingID, roomType, role, userType, username, roomID })
+              s.emit("all-messages", { userID, meetingID, roomType, role, userType, username, roomID })
+              s.on("all-messages", (data)=>console.log(data))
             }
 
           }
@@ -78,6 +88,8 @@ export default function SocketConnect(setSocket: (socket: Socket | null) => void
 
               SetRoom(roomDetails)
               s.emit("join", { userID, meetingID, roomType, role, userType, username, roomID })
+              s.emit("all-messages", { userID, meetingID, roomType, role, userType, username, roomID })
+              s.on("all-messages", (data)=>console.log(data))
             })
           })
         }
