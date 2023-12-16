@@ -27,10 +27,7 @@ const CreateMeeting = () => {
         const data = await response.json()
 
         if (data.roomID) {
-            if (localStorage.getItem("userInformation") != null) {
-                const userInformation = JSON.parse(localStorage.getItem("userInformation") || data.userID)
-                data.userID = userInformation["user_id"]
-            }
+            
             localStorage.setItem("roomDetails", JSON.stringify(data));
 
             dispatch(SetRoom(data))

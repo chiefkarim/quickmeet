@@ -7,7 +7,8 @@ export interface room {
     roomType: string | null,
     userID: string | null,
     userType: string | null,
-    role: string | null
+    role: string | null,
+    username: string | null
 }
 const initialState: room = {
     meetingID: null,
@@ -16,7 +17,8 @@ const initialState: room = {
     roomType: null,
     userID: null,
     userType: null,
-    role: null
+    role: null,
+    username: null
 }
 export const roomSlice = createSlice({
     name: 'room',
@@ -34,7 +36,8 @@ export const roomSlice = createSlice({
                 roomType: null,
                 userID: null,
                 userType: null,
-                role: null
+                role: null,
+                username: null
             }
         }
     }

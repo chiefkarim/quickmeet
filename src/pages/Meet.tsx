@@ -5,25 +5,28 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import SocketConnect from "../components/SocketConnect";
 import Navbar from "../components/Navbar";
+import { v4 as uuid } from "uuid"
+import { Socket } from "socket.io-client";
 interface streams {
   id: string,
   stream: MediaStream
 }
 
 function Meet() {
+  const [socket, setSocket] = useState<null | Socket>(null);
   const [streams, setStreams] = useState<streams[]>([]);
   const params = useParams();
   const roomID = params.id;
   const [enterRoom, setEnterRoom] = useState<boolean>(false)
-  const socket = SocketConnect()
   const [localStreamId, setLocalStreamId] = useState<string | null>(null)
   const localStream = streams.find(item => item.id === localStreamId)?.stream || null
 
+  
+  SocketConnect(setSocket)
   function updateStream(action: string, stream: MediaStream, id: string | null) {
 
     if (action === "set") {
       if (streams.filter((stream) => stream.id === id).length != 0) {
-
         const newStreams = streams.map((item) => {
           if (item.id === id) {
             return { id, stream }
@@ -32,17 +35,22 @@ function Meet() {
           }
         })
         setStreams(() => { return newStreams })
+        return id
       } else {
         if (stream instanceof MediaStream) setLocalStreamId(id)
         if (id) {
           setStreams((streams) => { return [...streams, { id, stream }] })
+          return id
         } else {
-          console.error("missing id")
+          const id = uuid()
+          setStreams((streams) => { return [...streams, { id, stream }] })
+          return id
         }
       }
     } else if (action === "remove" && id) {
       const newStreams = streams.filter((item) => item.id !== id)
       setStreams(newStreams)
+      return id
     }
   }
   // clean up media tracks

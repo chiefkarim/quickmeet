@@ -1,64 +1,89 @@
-import { useEffect, useState } from "react";
+import { useEffect, } from "react";
 import { io } from "socket.io-client";
 import { Socket } from "socket.io-client";
 import { useParams } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import { SetRoom } from "../redux/roomReducer";
+import { room } from "../redux/roomReducer";
 
-export default function SocketConnect() {
-  const [socket, setSocket] = useState<null | Socket>(null);
+export default function SocketConnect(setSocket: (socket: Socket | null) => void) {
   const URL = import.meta.env.VITE_BACKEND_URL;
   const params = useParams();
-  const roomID = params.id;
   const googleToken = localStorage.getItem("google-token")
-  const user = JSON.parse(localStorage.getItem("userInformation") ?? "null")
-  const roomDetails = useAppSelector(state => state.room)
+  const roomDetails: room = useAppSelector(state => state.room)
   const dispatch = useAppDispatch()
-  console.log("user", user)
+  const roomID = params.id
   useEffect(() => {
     const s = io(URL);
     s.on("connect", () => {
       setSocket(s);
-      console.log(`Room details ${googleToken}`);
+      
       if (googleToken != null) {
-        if (roomDetails != null) {
-          console.log("googletoken")
-          const { userID, meetingID, roomType, role } = roomDetails
+        const user = JSON.parse(localStorage.getItem("userInformation") || "null");
+        if (roomDetails.roomID != null) {
+          
+          const { userID, meetingID, roomType, role, userType, username, roomID } = roomDetails
           if (role && role == "host") {
             if (roomID != roomDetails.roomID) {
-              console.log("not the same")
-              s.emit("join", { roomID, userID, userType: "registered", role: "attendee" })
+              
+              s.emit("join", { roomID, userID, role: "attendee", userType, username })
             } else {
-
-              s.emit("join", { roomID, userID, meetingID, roomType, role, userType: "registered" })
+              s.emit("join", { roomID, userID, meetingID, roomType, role, userType, username })
             }
-          } else {
-            console.log("lol")
-            s.emit("join", { roomID, role: "attendee", userType: "registered", userID: user.user_id })
           }
+        } else {
+          const { username } = user
+          const userID = user.user_id
+
+          s.emit("get-room", { userID, username, roomID, userType: "registered" })
+          s.on("get-room", (roomDetails) => {
+            const { userID, meetingID, roomType, role, userType, username, roomID } = roomDetails
+
+            SetRoom(roomDetails)
+            s.emit("join", { userID, meetingID, roomType, role, userType, username, roomID })
+          })
+
         }
 
       } else {
-        if (roomDetails != null) {
-          const { userID, meetingID, roomType, role } = roomDetails
+
+        if (roomDetails.roomID != null) {
+          const { userID, meetingID, roomType, role, userType, username, roomID } = roomDetails
           if (role && role == "host") {
-            console.log("geust not null")
+            
             if (roomID != roomDetails.roomID) {
-              console.log("not the same")
+              
+
               s.emit("join", { roomID, userType: "guest", })
             } else {
-              s.emit("join", { roomID, userID, meetingID, roomType, role, userType: "guest" })
+              
+              s.emit("join", { userID, meetingID, roomType, role, userType, username, roomID })
             }
-          } else {
-            console.log("geust")
-            s.emit("join", { userType: "guest", roomID })
-          }
-          console.log("here", roomDetails)
 
+          }
+        } else {
+          
+
+          s.emit("create-guest", { username: "karim" })
+          s.on("create-guest", (guestInfo) => {
+            const { username } = guestInfo
+            const userID = guestInfo.guest_id
+            guestInfo.userID = userID
+
+            localStorage.setItem("userInformation", JSON.stringify(guestInfo))
+
+            s.emit("get-room", { userID, username, roomID, userType: "guest" })
+            s.on("get-room", (roomDetails) => {
+              const { userID, meetingID, roomType, role, userType, username, roomID } = roomDetails
+
+              SetRoom(roomDetails)
+              s.emit("join", { userID, meetingID, roomType, role, userType, username, roomID })
+            })
+          })
         }
       }
       s.on("join-response", ({ params: data }) => {
-        console.log("join response", data)
+        
 
         dispatch(SetRoom(data))
       })
@@ -69,5 +94,5 @@ export default function SocketConnect() {
     });
 
   }, []);
-  return socket
+
 }
