@@ -3,6 +3,8 @@ import send from "../assets/images/send.svg";
 import uploadPhoto from "../assets/images/photo.svg";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { room } from "../redux/roomReducer";
 
 interface MessagingBoard {
   socket: Socket | null;
@@ -12,11 +14,14 @@ interface MessagingBoard {
 const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
   const [messages, setMessages] = useState<string[]>([]);
   const [yourMessage, setYourMessage] = useState<string>();
+  const roomDetails: room = useAppSelector((state) => state.room);
+
   useEffect(() => {
     socket?.on("msg-to-client", (message) => {
       setMessages((messages) => [...messages, message]);
     });
-  }, [socket]);
+    console.log(roomDetails);
+  }, [socket, roomDetails]);
 
   const sendMessage = async () => {
     if (yourMessage) {
