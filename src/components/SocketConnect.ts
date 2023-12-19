@@ -219,9 +219,7 @@ export default function SocketConnect(
           });
         }
       }
-      s.on("join-response", ({ params: data }) => {
-        dispatch(SetRoom(data));
-      });
+
       s.on("error", (error) => {
         console.log(error);
       });
