@@ -30,6 +30,7 @@ const GoogleAuth = () => {
           
           const data = await response.json();
           if (response.status === 200) {
+            localStorage.removeItem("guestInformation");
             localStorage.setItem("userInformation", JSON.stringify(data));
             
           }else if (response.status === 500 || response.status === 400) {
