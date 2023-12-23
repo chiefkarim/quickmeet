@@ -7,7 +7,7 @@
     "dev": "vite --host",
     "build": "tsc && vite build",
     "tailwind": "postcss  ./src/assets/css/style.css -o ./src/index.css --watch",
-    "tailwindBuild": "postcss  ./src/index.css -o ./src/assets/css/style.css ",
+    "tailwindBuild": "postcss  ./src/index.css -o ./src/assets/css/style.css",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
