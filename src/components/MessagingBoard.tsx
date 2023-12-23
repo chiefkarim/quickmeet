@@ -3,7 +3,7 @@ import send from "../assets/images/send.svg";
 import uploadPhoto from "../assets/images/photo.svg";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { useAppSelector } from "../redux/hooks";
 import { room } from "../redux/roomReducer";
 
 interface MessagingBoard {
@@ -11,16 +11,40 @@ interface MessagingBoard {
   roomID: string | undefined;
 }
 
+interface chatParams {
+  messageID: number;
+  userID: number;
+  message: string;
+  username: string;
+  time: string;
+}
+
+const formatDate = (time: string) => {
+  const date = new Date(time);
+  let formattedTime = date.toLocaleTimeString("en-US", {
+    timeStyle: "short",
+  });
+
+  return formattedTime;
+};
+
 const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
-  const [messages, setMessages] = useState<string[]>([]);
+  const [chatData, setChatData] = useState<chatParams[]>([]);
   const [yourMessage, setYourMessage] = useState<string>();
   const roomDetails: room = useAppSelector((state) => state.room);
 
   useEffect(() => {
-    socket?.on("msg-to-client", (message) => {
-      setMessages((messages) => [...messages, message]);
+    socket?.on("msg-to-client", (params: chatParams) => {
+      params.time = formatDate(params.time);
+      setChatData((chatData) => [...chatData, params]);
     });
-    console.log(roomDetails);
+
+    if (roomDetails) {
+      socket?.on("all-messages", (params) => {
+        params.time = formatDate(params.time);
+        setChatData(params.messages);
+      });
+    }
   }, [socket, roomDetails]);
 
   const sendMessage = async () => {
@@ -36,22 +60,26 @@ const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
   return (
     <div className=" max-h-[90vh] bg-extra-light-grey w-full  flex flex-col overflow-hidden justify-between">
       <div className="messages rounded-[8px] my-[1.38rem] ml-[0.38rem] mr-[1rem] flex flex-col overflow-scroll  ">
-        {messages &&
-          messages.map((message) => (
-            <div className="message flex" key={crypto.randomUUID()}>
+        {chatData &&
+          chatData.map((chat) => (
+            <div className="message flex" key={chat.messageID}>
               <img
                 src={easy}
                 className="h-[2.7rem] w-[2.7rem] inline-block rounded-[16px] mx-[1rem] "
               />
               <div className=" bg-white w-full py-[0.56rem] px-[0.81rem] inline-block mt-[1.35rem]">
-                <p className="text-[0.8125rem] opacity-100">{message} </p>
+                <p className="text-[0.8125rem] opacity-100">{chat.message} </p>
                 <p className="text-[0.625rem] text-light-grey opacity-[0.8] block text-end ">
-                  time
+                  {chat.username}
+                </p>
+                <p className="text-[0.625rem] text-light-grey opacity-[0.8] block text-end">
+                  {chat.time}
                 </p>
               </div>
             </div>
           ))}
       </div>
+
       <div className="userInputMessage  relative m-[1.38rem] rounded-[8px] border-none ">
         <input
           type="text"

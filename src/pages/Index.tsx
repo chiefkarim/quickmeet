@@ -16,10 +16,10 @@ function Index() {
   function handelChange(e: ChangeEvent<HTMLInputElement>) {
     let url;
     console.log(e)
-    if (e.target.value.startsWith("https://")) {
+    if (e.target.value.startsWith("http://")) {
       url = e.target.value
     } else {
-      url = "https://" + e.target.value
+      url = "http://localhost:5173/meet/" + e.target.value
     }
 
     setMeetingURL(url)
