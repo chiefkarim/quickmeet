@@ -54,16 +54,21 @@ const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
     });
 
     if (yourMessage) {
-      socket?.emit("msg-to-server", { message: yourMessage, roomID: roomID });
-      setChatData([
-        ...chatData,
-        {
-          userID: roomDetails.userID,
-          message: yourMessage,
-          time: currentTime,
-          username: roomDetails.username,
-        },
-      ]);
+      const response = await socket
+        ?.timeout(5000)
+        .emitWithAck("msg-to-server", { message: yourMessage, roomID: roomID });
+
+      if (response.status) {
+        setChatData([
+          ...chatData,
+          {
+            userID: roomDetails.userID,
+            message: yourMessage,
+            time: currentTime,
+            username: roomDetails.username,
+          },
+        ]);
+      }
     }
   };
 
