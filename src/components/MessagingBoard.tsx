@@ -16,6 +16,7 @@ interface chatParams {
   userID: string | null;
   message: string | undefined;
   username: string | null;
+  profilePic: string | null;
   time: string;
 }
 
@@ -32,6 +33,11 @@ const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
   const [chatData, setChatData] = useState<chatParams[]>([]);
   const [yourMessage, setYourMessage] = useState<string>();
   const roomDetails: room = useAppSelector((state) => state.room);
+  const user = JSON.parse(localStorage.getItem("userInformation") || "null");
+  let profilePic: string | null;
+  if (user) {
+    profilePic = user.profile_pic;
+  }
 
   useEffect(() => {
     socket?.on("msg-to-client", (params: chatParams) => {
@@ -64,10 +70,12 @@ const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
           {
             userID: roomDetails.userID,
             message: yourMessage,
+            profilePic: profilePic,
             time: currentTime,
             username: roomDetails.username,
           },
         ]);
+        setYourMessage("");
       }
     }
   };
@@ -87,7 +95,10 @@ const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
               } `}
               key={crypto.randomUUID()}
             >
-              <img src={avatar} className="h-6 w-6 rounded-[16px] mx-[1rem] " />
+              <img
+                src={chat.profilePic ? chat.profilePic : avatar}
+                className="h-10 w-10 rounded-[20px] mx-[1rem] "
+              />
               <div className="flex flex-col ">
                 <span
                   className={`text-[0.81rem] mb-1 inline-block text-black ${
@@ -113,6 +124,7 @@ const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
         <form onSubmit={(e) => sendMessage(e)}>
           <input
             type="text"
+            value={yourMessage}
             className="w-full h-[2.75rem] border-none px-[40px]"
             onChange={(e) => handleChange(e)}
           />
