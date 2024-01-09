@@ -34,6 +34,7 @@ function Meet() {
     stream: MediaStream,
     id: string | null
   ) {
+    console.log("updatestream",action,id,stream,)
     if (action === "set") {
       if (streams.filter((stream) => stream.id === id).length != 0) {
         const newStreams = streams.map((item) => {
@@ -91,7 +92,7 @@ function Meet() {
       const videoTrack = localStream?.stream.getVideoTracks()[0];
       const audioTrack = localStream?.stream.getAudioTracks()[0];
 
-      console.log({ audioTrack: audioTrack, videoTrack: videoTrack });
+      console.log({localStream, audioTrack: audioTrack, videoTrack: videoTrack });
 
       if (videoTrack) pc.addTrack(videoTrack);
       if (audioTrack) pc.addTrack(audioTrack);
@@ -141,12 +142,12 @@ function Meet() {
           <div className="px-10 mr-0 max-w[1440px] flex gap-[1rem] justify-between">
             <div className="flex flex-col gap-[1rem] max-w-[85vw] tablet:max-w-[55vw]  ">
               <div className="localVideo tablet:w-auto w-[65vw]   min-h-[75vh] relative bg-extra-light-grey">
-                {/* <Video
+                 <Video
                   id={localStreamId}
                   Stream={localStream}
                   autoRun={false}
                   updateStream={updateStream}
-                /> */}
+                /> 
               </div>
               <div className=" flex gap-[1rem] w-full justify-between ">
                 {streams.map((stream) => {

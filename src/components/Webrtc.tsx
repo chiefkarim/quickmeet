@@ -33,8 +33,8 @@ const Webrtc: React.FC<prop> = ({
       pc.ontrack = (e) => {
         const newStream = new MediaStream([e.track]);
         const id = crypto.randomUUID();
-        let rID = updateStream("set", newStream, id);
-        console.log(rID);
+        const rID = updateStream("set", newStream, id);
+        console.log("remote stream id",rID);
       };
 
       socket?.on("iceCandidate", ({ candidate }) => {
