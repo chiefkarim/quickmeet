@@ -6,13 +6,14 @@ import { FormEvent, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { useAppSelector } from "../redux/hooks";
 import { room } from "../redux/roomReducer";
+import Chat from "./Chat";
 
 interface MessagingBoard {
   socket: Socket | null;
   roomID: string | undefined;
 }
 
-interface chatParams {
+export interface chatParams {
   userID: string | null;
   message: string | undefined;
   username: string | null;
@@ -31,7 +32,7 @@ const formatDate = (time: string) => {
 
 const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
   const [chatData, setChatData] = useState<chatParams[]>([]);
-  const [yourMessage, setYourMessage] = useState<string>();
+  const [yourMessage, setYourMessage] = useState<string>("");
   const roomDetails: room = useAppSelector((state) => state.room);
   const user = JSON.parse(localStorage.getItem("userInformation") || "null");
   let profilePic: string | null;
@@ -45,10 +46,18 @@ const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
       setChatData((chatData) => [...chatData, params]);
     });
 
+    console.log(roomDetails);
+
     if (roomDetails) {
+      const { meetingID, roomType, userID, userType } = roomDetails;
+      socket?.emit("all-messages", { meetingID, roomType, userID, userType });
       socket?.on("all-messages", (params) => {
-        params.time = formatDate(params.time);
-        setChatData(params.messages);
+        params.forEach((param: { time: string }) => {
+          param.time = formatDate(param.time);
+        });
+        console.log(params);
+
+        setChatData(params);
       });
     }
   }, [socket, roomDetails]);
@@ -80,43 +89,16 @@ const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
     }
   };
 
-  const handleChange = (e: any) => {
-    setYourMessage(e.target.value);
-  };
-
   return (
     <div className=" max-h-[90vh] bg-extra-light-grey w-full  flex flex-col overflow-hidden justify-between">
       <div className="messages rounded-[8px] my-[1.38rem] ml-[0.38rem] mr-[1rem] flex flex-col overflow-scroll">
         {chatData &&
           chatData.map((chat) => (
-            <div
-              className={`message m-[0.5rem] flex items-center ${
-                chat.userID == roomDetails.userID ? "flex-row-reverse" : ""
-              } `}
+            <Chat
               key={crypto.randomUUID()}
-            >
-              <img
-                src={chat.profilePic ? chat.profilePic : avatar}
-                className="h-10 w-10 rounded-[20px] mx-[1rem] "
-              />
-              <div className="flex flex-col ">
-                <span
-                  className={`text-[0.81rem] mb-1 inline-block text-black ${
-                    chat.userID == roomDetails.userID ? "text-end" : ""
-                  }`}
-                >
-                  {chat.userID == roomDetails.userID ? "You" : chat.username}
-                </span>
-                <div className="msg-body bg-white w-full py-[0.56rem] min-w-[100px] px-[0.81rem] rounded-br-lg max-w-xs">
-                  <p className="text-[0.8125rem] opacity-100">
-                    {chat.message}{" "}
-                  </p>
-                  <p className="text-[0.625rem] text-light-grey opacity-[0.8] block text-end">
-                    {chat.time}
-                  </p>
-                </div>
-              </div>
-            </div>
+              userID={roomDetails.userID}
+              chat={chat}
+            />
           ))}
       </div>
 
@@ -126,7 +108,7 @@ const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
             type="text"
             value={yourMessage}
             className="w-full h-[2.75rem] border-none px-[40px]"
-            onChange={(e) => handleChange(e)}
+            onChange={(e) => setYourMessage(e.target.value)}
           />
           <button className="absolute px-2 top-0 left-0 bg-opacity-0 bg-transparent border-none">
             <img src={uploadPhoto} />
