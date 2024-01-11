@@ -1,5 +1,3 @@
-import easy from "../assets/images/easy.svg";
-import avatar from "../assets/images/Avatar.svg";
 import send from "../assets/images/send.svg";
 import uploadPhoto from "../assets/images/photo.svg";
 import { FormEvent, useEffect, useState } from "react";

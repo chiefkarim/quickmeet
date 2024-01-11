@@ -5,9 +5,12 @@ import { useParams } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { SetRoom } from "../redux/roomReducer";
 import { room } from "../redux/roomReducer";
+import { joinStatus } from "../pages/Meet";
 
 export default function SocketConnect(
-  setSocket: (socket: Socket | null) => void
+  setSocket: (socket: Socket | null) => void,
+  setError: (error: string) => void,
+  setJoinStatus: (joinStatus: joinStatus) => void
 ) {
   const URL = import.meta.env.VITE_BACKEND_URL;
   const params = useParams();
@@ -63,8 +66,13 @@ export default function SocketConnect(
           roomID,
         });
 
-        s.on("error", (error) => {
-          console.log(error);
+        s.on("join", (params) => {
+          params.ok && setJoinStatus("joined");
+        });
+
+        s.on("error", (params) => {
+          setError(params.error);
+          setJoinStatus("error");
         });
         return () => s.disconnect();
       }
