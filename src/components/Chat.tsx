@@ -1,6 +1,6 @@
 import React from "react";
 import { chatParams } from "./MessagingBoard.js";
-import avatar from "../assets/images/Avatar.svg";
+import avatar from "../assets/images/Avatar.jpg";
 
 interface Chat {
   chat: chatParams;

@@ -8,11 +8,14 @@ import Navbar from "../components/Navbar";
 import { Webrtc } from "../components/Webrtc";
 import { v4 as uuid } from "uuid";
 import { Socket } from "socket.io-client";
+import { Link } from "react-router-dom";
 
 export interface streams {
   id: string;
   stream: MediaStream;
 }
+
+export type joinStatus = "loading" | "joined" | "error";
 
 const pc = new RTCPeerConnection({
   iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
@@ -21,6 +24,8 @@ const pc = new RTCPeerConnection({
 function Meet() {
   const [socket, setSocket] = useState<null | Socket>(null);
   const [streams, setStreams] = useState<streams[]>([]);
+  const [error, setError] = useState<string>("");
+  const [joinStatus, setJoinStatus] = useState<joinStatus>("loading");
   const params = useParams();
   const roomID = params.id;
   const [enterRoom, setEnterRoom] = useState<boolean>(false);
@@ -28,7 +33,8 @@ function Meet() {
   const localStream =
     streams.find((item) => item.id === localStreamId)?.stream || null;
 
-  SocketConnect(setSocket);
+  const joinMeet = SocketConnect(setSocket, setError, setJoinStatus);
+
   function updateStream(
     action: string,
     stream: MediaStream,
@@ -112,27 +118,45 @@ function Meet() {
   if (enterRoom === false) {
     return (
       <>
-        <Navbar />
-        <section className="pt-0 mt-0 flex flex-col items-center justify-center ">
-          <div className="bg-white   ">
-            <div className="relative localCam h-[70vh] ">
-              <Video
-                id={null}
-                Stream={localStream}
-                autoRun={true}
-                updateStream={updateStream}
-              />
+        <div className="bg-white min-h-screen">
+          <Navbar />
+          <section className="pt-0 mt-0 flex flex-col items-center justify-center">
+            <div className="  ">
+              <div className="relative localCam h-[60vh] bg-black">
+                <Video
+                  id={null}
+                  Stream={localStream}
+                  autoRun={true}
+                  updateStream={updateStream}
+                />
+              </div>
+              {error && (
+                <div className="mt-[30px] text-center  text-black">
+                  <p className="text-center text-2xl">{error}</p> <br />
+                  <Link to={"/"}>
+                    <button className="bg-red-500 text-white">Back</button>
+                  </Link>
+                </div>
+              )}
+              {joinStatus === "joined" && (
+                <div className="mt-[30px] flex justify-center">
+                  <button
+                    onClick={join}
+                    className="bg-green   text-[14px] tablet:text-[12px] tablet:px-[10px] px-[18px] py-[11px] text-white"
+                  >
+                    join room
+                  </button>
+                </div>
+              )}
+              {joinStatus === "loading" && (
+                <div className="text-center">
+                  <h2 className="text-2xl text-black ">Getting Ready....</h2>
+                  <p>You'll be able to join in a moment</p>
+                </div>
+              )}
             </div>
-            <div className="mt-[30px] flex justify-center">
-              <button
-                onClick={join}
-                className="bg-green   text-[14px] tablet:text-[12px] tablet:px-[10px] px-[18px] py-[11px] text-white"
-              >
-                join room
-              </button>
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </>
     );
   } else {
