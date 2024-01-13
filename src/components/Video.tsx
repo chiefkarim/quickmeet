@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Dispatch, SetStateAction } from "react";
 import CamOn from "../assets/images/camon.svg?react";
 import CamOff from "../assets/images/camOff.svg?react";
 import MicOn from "../assets/images/micOn.svg?react";
@@ -10,59 +10,51 @@ import { v4 as uuid } from "uuid";
 //export getMediaAccess and use it on the load of meeting page(put it in utils folder)
 function Video({
   id,
-  Stream,
+  localStream,
+  setLocalStream,
   autoRun,
-  updateStream,
 }: {
-  id: string | null;
-  Stream: MediaStream | null;
+  id: string | null | undefined;
+  localStream: MediaStream | null;
+  setLocalStream: Dispatch<SetStateAction<MediaStream | null>>;
   autoRun: boolean;
-  updateStream: (
-    action: string,
-    stream: MediaStream,
-    id: string | null
-  ) => void;
 }) {
-  const [stream, setStream] = useState<null | MediaStream>(Stream);
+  // const [stream, setStream] = useState<null | MediaStream>(Stream);
   const [screenWidth, setScreenWidth] = useState<null | number>(null);
   const [cam, setCam] = useState<boolean | null>(null);
   const [audio, setAudio] = useState<boolean | null>(null);
   const videoRef = useRef<null | HTMLVideoElement>(null);
-  const user = JSON.parse(localStorage.getItem("userInformation") || "null");
 
   [id] = useState(id != null ? id : uuid());
 
   //gets the userMedia
   useEffect(() => {
-    if (stream && autoRun == false) {
+    if (localStream && autoRun == false) {
       setCam(() => {
-        return stream.getTracks().some((track) => track.kind === "video");
+        return localStream.getTracks().some((track) => track.kind === "video");
       });
       setAudio(() => {
-        return stream.getTracks().some((track) => track.kind === "audio");
+        return localStream.getTracks().some((track) => track.kind === "audio");
       });
       if (videoRef.current) {
-        videoRef.current.srcObject = Stream;
+        videoRef.current.srcObject = localStream;
       }
     }
     //make it into a function and export it
     //responsive video
-    const updateScreenWidth = () => {
-      setScreenWidth(window.innerWidth);
-    };
-    window.addEventListener("resize", updateScreenWidth);
+    // const updateScreenWidth = () => {
+    //   setScreenWidth(window.innerWidth);
+    // };
+    // window.addEventListener("resize", updateScreenWidth);
     // pass input,cam,audio as arguments
     if (autoRun == true) {
       getMediaAccess({ input: "all", cam: cam, audio: audio }).then(
         (MediaStream) => {
           if (typeof MediaStream != "boolean") {
-            setStream(() => {
-              return MediaStream;
-            });
+            setLocalStream(MediaStream);
 
-            updateStream("set", MediaStream, id);
             if (videoRef.current) {
-              videoRef.current.srcObject = stream;
+              videoRef.current.srcObject = localStream;
             }
           }
 
@@ -74,39 +66,37 @@ function Video({
 
     // clean up event listener
     return () => {
-      window.removeEventListener("resize", updateScreenWidth);
+      // window.removeEventListener("resize", updateScreenWidth);
     };
   }, [screenWidth]);
 
   // clean up media tracks
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.srcObject = stream;
+      videoRef.current.srcObject = localStream;
     }
-  }, [stream]);
+  }, [localStream]);
 
   function toggleAudio() {
-    if (audio && stream) {
-      const modifiedStream = stream.clone();
+    if (audio && localStream) {
+      const modifiedStream = localStream.clone();
       modifiedStream.getAudioTracks().forEach((track) => {
         track.stop();
         modifiedStream.removeTrack(track);
       });
-      setStream(() => {
+      setLocalStream(() => {
         return modifiedStream;
       });
       setAudio(false);
-      updateStream("set", modifiedStream, id);
     } else {
       getMediaAccess({ input: "audio", cam: cam, audio: audio }).then(
         (MediaStream) => {
           if (typeof MediaStream != "boolean") {
-            setStream(() => {
+            setLocalStream(() => {
               return MediaStream;
             });
-            updateStream("set", MediaStream, id);
             if (videoRef.current) {
-              videoRef.current.srcObject = stream;
+              videoRef.current.srcObject = localStream;
             }
           }
 
@@ -117,28 +107,26 @@ function Video({
   }
 
   function toggleCam() {
-    if (cam && stream) {
-      const modifiedStream = stream.clone();
+    if (cam && localStream) {
+      const modifiedStream = localStream.clone();
       modifiedStream.getVideoTracks().forEach((track) => {
         track.stop();
         modifiedStream.removeTrack(track);
       });
-      setStream(() => {
+      setLocalStream(() => {
         return modifiedStream;
       });
 
-      updateStream("set", modifiedStream, id);
       setCam(false);
     } else {
       getMediaAccess({ input: "video", cam: cam, audio: audio }).then(
         (MediaStream) => {
           if (typeof MediaStream != "boolean") {
-            setStream(() => {
+            setLocalStream(() => {
               return MediaStream;
             });
-            updateStream("set", MediaStream, id);
             if (videoRef.current) {
-              videoRef.current.srcObject = stream;
+              videoRef.current.srcObject = localStream;
             }
           }
           setCam(true);
@@ -167,17 +155,17 @@ function Video({
         ref={videoRef}
         playsInline={true}
         autoPlay={true}
-        className=" h-full w-full"
+        className=" h-full w-full max-h-[80vh]"
         controls={false}
       ></video>
 
       <div className="absolute flex w-full bottom-0 justify-between black-gradient-hover">
         <div>
           <button className=" bg-transparent text-white  " onClick={toggleCam}>
-            {cam ? <CamOff /> : <CamOn />}
+            {cam ? <CamOn /> : <CamOff />}
           </button>
           <button className="   bg-transparent" onClick={toggleAudio}>
-            {audio ? <MicOff /> : <MicOn />}
+            {audio ? <MicOn /> : <MicOff />}
           </button>
         </div>
         <button className=" bg-transparent  " onClick={toggleFullscreen}>
