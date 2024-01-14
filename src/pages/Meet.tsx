@@ -1,14 +1,12 @@
-import Footer from "../components/Footer";
-import MessagingBoard from "../components/MessagingBoard";
-import Video from "../components/Video";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import SocketConnect from "../components/SocketConnect";
-import Navbar from "../components/Navbar";
-import { Webrtc } from "../components/Webrtc";
+
 import { v4 as uuid } from "uuid";
 import { Socket } from "socket.io-client";
-import { Link } from "react-router-dom";
+
+import BeforeJoin from "../components/BeforeJoin";
+import AferJoin from "../components/AferJoin";
 
 export interface streams {
   id: string;
@@ -18,75 +16,75 @@ export interface streams {
 export type joinStatus = "loading" | "joined" | "error";
 
 const pc = new RTCPeerConnection({
-  iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+  iceServers: [
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "turns:freeturn.tel:5349", username: "free", credential: "free" },
+  ],
 });
 
 function Meet() {
   const [socket, setSocket] = useState<null | Socket>(null);
-  const [streams, setStreams] = useState<streams[]>([]);
-  const [error, setError] = useState<string>("");
-  const [joinStatus, setJoinStatus] = useState<joinStatus>("loading");
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+
   const params = useParams();
   const roomID = params.id;
+
   const [enterRoom, setEnterRoom] = useState<boolean>(false);
-  const [localStreamId, setLocalStreamId] = useState<string | null>(null);
-  const localStream =
-    streams.find((item) => item.id === localStreamId)?.stream || null;
+  const [error, setError] = useState<string>("");
+  const [joinStatus, setJoinStatus] = useState<joinStatus>("loading");
 
-  const joinMeet = SocketConnect(setSocket, setError, setJoinStatus);
+  SocketConnect(setSocket, setError, setJoinStatus);
 
-  function updateStream(
-    action: string,
-    stream: MediaStream,
-    id: string | null
-  ) {
-    console.log("updatestream",action,id,stream,)
-    if (action === "set") {
-      if (streams.filter((stream) => stream.id === id).length != 0) {
-        const newStreams = streams.map((item) => {
-          if (item.id === id) {
-            return { id, stream };
-          } else {
-            return item;
-          }
-        });
-        setStreams(() => {
-          return newStreams;
-        });
-        return id;
-      } else {
-        if (stream instanceof MediaStream) setLocalStreamId(id);
-        if (id) {
-          setStreams((streams) => {
-            return [...streams, { id, stream }];
-          });
-          return id;
-        } else {
-          const id = uuid();
-          setStreams((streams) => {
-            return [...streams, { id, stream }];
-          });
-          return id;
-        }
-      }
-    } else if (action === "remove" && id) {
-      const newStreams = streams.filter((item) => item.id !== id);
-      setStreams(newStreams);
-      return id;
-    }
-  }
-
-  // clean up media tracks
   useEffect(() => {
-    return () => {
-      if (streams) {
-        streams.forEach((stream) => {
-          console.log(stream.id);
-          stream.stream.getTracks().forEach((track) => track.stop());
-        });
-      }
-    };
-  }, [streams]);
+    console.log(socket);
+
+    socket?.on("localDescription", async ({ description }) => {
+      console.log("recieving localDescription of the remote peer");
+      console.log({ Rdes: description });
+
+      pc.setRemoteDescription(description);
+
+      pc.ontrack = (e) => {
+        setRemoteStream(new MediaStream([e.track]));
+      };
+
+      socket?.on("iceCandidate", ({ candidate }) => {
+        pc.addIceCandidate(candidate);
+      });
+
+      pc.onicecandidate = ({ candidate }) => {
+        socket.emit("iceCandidateReply", { candidate });
+      };
+
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      console.log({ answer: answer });
+      console.log("created an answer and set it as localDescription");
+
+      socket.emit("remoteDescription", { description: pc.localDescription });
+    });
+
+    socket?.on("remoteDescription", async ({ description }) => {
+      console.log("getting answer from other user");
+
+      pc.setRemoteDescription(description);
+      console.log(pc);
+      console.log({ remoteDes: description });
+      pc.ontrack = (e) => {
+        console.log(e.track);
+        setRemoteStream(new MediaStream([e.track]));
+      };
+
+      socket?.on("iceCandidate", ({ candidate }) => {
+        pc.addIceCandidate(candidate);
+      });
+
+      pc.onicecandidate = ({ candidate }) => {
+        socket?.emit("iceCandidateReply", { candidate });
+      };
+    });
+  }, [socket]);
 
   async function join() {
     try {
@@ -94,120 +92,55 @@ function Meet() {
         socket?.emit("iceCandidate", { candidate });
       };
       // video stream to rtcpeerconnection
-      const localStream = streams.find((stream) => stream.id === localStreamId);
-      const videoTrack = localStream?.stream.getVideoTracks()[0];
-      const audioTrack = localStream?.stream.getAudioTracks()[0];
+      const videoTrack = localStream?.getVideoTracks()[0];
+      const audioTrack = localStream?.getAudioTracks()[0];
 
-      console.log({localStream, audioTrack: audioTrack, videoTrack: videoTrack });
+      console.log("adding video tracks", videoTrack);
+      const combinedStream = new MediaStream();
+      if (videoTrack) combinedStream.addTrack(videoTrack);
+      if (audioTrack) combinedStream.addTrack(audioTrack);
 
-      if (videoTrack) pc.addTrack(videoTrack);
-      if (audioTrack) pc.addTrack(audioTrack);
+      // adding both audio and video track to a specific stream.
+      combinedStream.getTracks().forEach((track) => {
+        pc.addTrack(track, combinedStream);
+      });
 
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
 
-      console.log({ ldes: pc.localDescription });
+      console.log({ offerPC: pc });
       socket?.emit("localDescription", {
         description: pc.localDescription,
       });
+      console.log("created offer and send local description to other user");
     } catch (err) {
       console.log(err);
     }
     setEnterRoom(true);
   }
-  if (enterRoom === false) {
-    return (
-      <>
-        <div className="bg-white min-h-screen">
-          <Navbar />
-          <section className="pt-0 mt-0 flex flex-col items-center justify-center">
-            <div className="  ">
-              <div className="relative localCam h-[60vh] bg-black">
-                <Video
-                  id={null}
-                  Stream={localStream}
-                  autoRun={true}
-                  updateStream={updateStream}
-                />
-              </div>
-              {error && (
-                <div className="mt-[30px] text-center  text-black">
-                  <p className="text-center text-2xl">{error}</p> <br />
-                  <Link to={"/"}>
-                    <button className="bg-red-500 text-white">Back</button>
-                  </Link>
-                </div>
-              )}
-              {joinStatus === "joined" && (
-                <div className="mt-[30px] flex justify-center">
-                  <button
-                    onClick={join}
-                    className="bg-green   text-[14px] tablet:text-[12px] tablet:px-[10px] px-[18px] py-[11px] text-white"
-                  >
-                    join room
-                  </button>
-                </div>
-              )}
-              {joinStatus === "loading" && (
-                <div className="text-center">
-                  <h2 className="text-2xl text-black ">Getting Ready....</h2>
-                  <p>You'll be able to join in a moment</p>
-                </div>
-              )}
-            </div>
-          </section>
-        </div>
-      </>
-    );
-  } else {
-    return (
-      <div className="bg-white pt-5 ">
-        <section className="px-0">
-          <div className="px-10 mr-0 max-w[1440px] flex gap-[1rem] justify-between">
-            <div className="flex flex-col gap-[1rem] max-w-[85vw] tablet:max-w-[55vw]  ">
-              <div className="localVideo tablet:w-auto w-[65vw]   min-h-[75vh] relative bg-extra-light-grey">
-                 <Video
-                  id={localStreamId}
-                  Stream={localStream}
-                  autoRun={false}
-                  updateStream={updateStream}
-                /> 
-              </div>
-              <div className=" flex gap-[1rem] w-full justify-between ">
-                {streams.map((stream) => {
-                  if (stream.id != localStreamId) {
-                    return (
-                      <li
-                        key={stream.id}
-                        className="w-[12.0625rem] h-[6.4375rem] bg-extra-light-grey "
-                      >
-                        <Video
-                          id={stream.id}
-                          Stream={stream.stream}
-                          autoRun={false}
-                          updateStream={updateStream}
-                        />
-                      </li>
-                    );
-                  }
-                })}
-              </div>
-            </div>
-            <MessagingBoard socket={socket} roomID={roomID} />
-            <Webrtc
-              socket={socket}
-              roomID={roomID}
-              pc={pc}
-              streams={streams}
-              updateStream={updateStream}
-            />
-          </div>
-        </section>
-        <section className="px-[3rem] ">
-          <Footer />
-        </section>
-      </div>
-    );
-  }
+
+  return (
+    <>
+      {enterRoom === false ? (
+        <BeforeJoin
+          localStream={localStream}
+          setLocalStream={setLocalStream}
+          join={join}
+          error={error}
+          joinStatus={joinStatus}
+        />
+      ) : (
+        <AferJoin
+          localStream={localStream}
+          setLocalStream={setLocalStream}
+          remoteStream={remoteStream}
+          socket={socket}
+          roomID={roomID}
+        />
+      )}
+    </>
+  );
 }
+
 export default Meet;
+

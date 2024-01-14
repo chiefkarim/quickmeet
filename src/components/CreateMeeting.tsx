@@ -6,10 +6,12 @@ const CreateMeeting = () => {
   const url = import.meta.env.VITE_BACKEND_URL;
   const googleToken = localStorage.getItem("google-token");
   const navigate = useNavigate();
+
   let response;
   let params = {};
   const room = useAppSelector((state) => state.room);
   const dispatch = useAppDispatch();
+
   const createMeet = async () => {
     if (
       googleToken != null &&
@@ -44,12 +46,12 @@ const CreateMeeting = () => {
           "guestInformation",
           JSON.stringify({
             guest_id: data.userID,
-            userID: data.userID,
+            userType: data.userType,
             username: data.username,
           })
         );
 
-    //   localStorage.setItem("roomDetails", JSON.stringify(data));
+      //   localStorage.setItem("roomDetails", JSON.stringify(data));
 
       dispatch(SetRoom(data));
       console.log("room", data);
