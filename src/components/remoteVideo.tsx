@@ -1,39 +1,54 @@
 import { useState, useRef, useEffect } from "react";
+import { Dispatch, SetStateAction } from "react";
+
 import CamOn from "../assets/images/camon.svg?react";
 import CamOff from "../assets/images/camOff.svg?react";
 import MicOn from "../assets/images/micOn.svg?react";
 import MicOff from "../assets/images/micOff.svg?react";
 
 interface props {
-  Stream: MediaStream | null;
+  remoteStream: MediaStream | null;
+  config: Config;
+  setConfig: Dispatch<SetStateAction<Config>>;
+}
+export interface Config {
+  video: boolean | undefined;
+  audio: boolean | undefined;
 }
 
-const RemoteVideo = ({ Stream }: props) => {
+const RemoteVideo = ({ remoteStream, config, setConfig }: props) => {
+  const [stream, setStream] = useState(remoteStream);
   const videoRef = useRef<null | HTMLVideoElement>(null);
-  const hasAudio = Stream?.getTracks().some((track) => track.kind === "audio");
-  const hasVideo = Stream?.getTracks().some((track) => track.kind === "video");
-  console.log(hasAudio, hasVideo);
+
+  console.log(config);
+
+  const updateConfig = () => {
+    const video = stream?.getVideoTracks().some((track) => track.enabled);
+    const audio = stream?.getAudioTracks().some((track) => track.enabled);
+    setConfig({ video, audio });
+  };
 
   useEffect(() => {
+    updateConfig();
     if (videoRef && videoRef.current) {
-      videoRef.current.srcObject = Stream;
+      videoRef.current.srcObject = stream;
     }
-  }, [Stream, videoRef]);
+  }, [stream, videoRef]);
 
   return (
     <>
-      <div className="remote-video relative">
+      <div className="remote-video relative w-full h-full object-cover">
         <video
           ref={videoRef}
           playsInline={true}
           autoPlay={true}
           controls={false}
-          className="w-56 h-32 bg-black"
+          className="w-full h-full bg-black"
         ></video>
         <div className="absolute flex w-full bottom-0 justify-between black-gradient-hover">
           <div className="flex flex-row gap-2 m-2">
-            {hasVideo ? <CamOn /> : <CamOff />}
-            {hasAudio ? <MicOn /> : <MicOff />}
+            {config.video ? <CamOn /> : <CamOff />}
+            {config.audio ? <MicOn /> : <MicOff />}
           </div>
         </div>
       </div>

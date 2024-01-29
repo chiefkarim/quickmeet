@@ -150,12 +150,12 @@ function Video({
   }
 
   return (
-    <div className="relative localCam h-full">
+    <div className="relative localCam h-full w-full  object-cover">
       <video
         ref={videoRef}
         playsInline={true}
         autoPlay={true}
-        className=" h-full w-full max-h-[80vh]"
+        className=" h-full w-full"
         controls={false}
       ></video>
 
@@ -172,6 +172,7 @@ function Video({
           <FullScreen />
         </button>
       </div>
+      <div className="absolute top-1 left-3 text-xl text-white">you</div>
     </div>
   );
 }

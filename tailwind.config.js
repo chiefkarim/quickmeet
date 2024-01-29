@@ -4,7 +4,7 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     screens: {
-      tablet: { max: "991px" },
+      tablet: { min: "991px" },
       "mobile-landscape": { max: "767px" },
       mobile: { max: "479px" },
     },

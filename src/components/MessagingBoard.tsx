@@ -88,7 +88,7 @@ const MessagingBoard: React.FC<MessagingBoard> = ({ socket, roomID }) => {
   };
 
   return (
-    <div className=" max-h-[90vh] bg-extra-light-grey w-full  flex flex-col overflow-hidden justify-between">
+    <div className=" max-w-md bg-extra-light-grey w-full  flex flex-col overflow-hidden justify-between">
       <div className="messages rounded-[8px] my-[1.38rem] ml-[0.38rem] mr-[1rem] flex flex-col overflow-scroll">
         {chatData &&
           chatData.map((chat) => (
