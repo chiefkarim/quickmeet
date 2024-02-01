@@ -8,25 +8,10 @@ import MicOff from "../assets/images/micOff.svg?react";
 
 interface props {
   remoteStream: MediaStream | null;
-  config: Config;
-  setConfig: Dispatch<SetStateAction<Config>>;
-}
-export interface Config {
-  video: boolean | undefined;
-  audio: boolean | undefined;
 }
 
-const RemoteVideo = ({ remoteStream, config, setConfig }: props) => {
-  // const [stream, setStream] = useState(remoteStream);
+const RemoteVideo = ({ remoteStream }: props) => {
   const videoRef = useRef<null | HTMLVideoElement>(null);
-
-  console.log(config);
-
-  // const updateConfig = () => {
-  //   const video = remoteStream?.getVideoTracks().some((track) => track.enabled);
-  //   const audio = remoteStream?.getAudioTracks().some((track) => track.enabled);
-  //   setConfig({ video, audio });
-  // };
 
   const video = remoteStream?.getVideoTracks().some((track) => track.enabled);
   const audio = remoteStream?.getAudioTracks().some((track) => track.enabled);

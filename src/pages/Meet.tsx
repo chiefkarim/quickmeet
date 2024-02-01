@@ -2,12 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import SocketConnect from "../components/SocketConnect";
 
-import { v4 as uuid } from "uuid";
 import { Socket } from "socket.io-client";
 
 import BeforeJoin from "../components/BeforeJoin";
 import AferJoin from "../components/AferJoin";
-import { Config } from "../components/remoteVideo";
 import { getCurrentUser, updateUserList } from "../utils/webrtcHandler";
 import { useAppSelector } from "../redux/hooks";
 import { room } from "../redux/roomReducer";
@@ -65,8 +63,6 @@ function Meet() {
     MediaStream[] | null | undefined
   >([]);
 
-  const [config, setConfig] = useState<Config>({ video: false, audio: false });
-
   const params = useParams();
   const roomID = params.id;
 
@@ -112,7 +108,7 @@ function Meet() {
 
       pc?.setRemoteDescription(description);
 
-      console.log(enterRoom)
+      console.log(enterRoom);
       if (enterRoom) {
         localStream?.getTracks().forEach((track) => {
           pc.addTrack(track, localStream);
@@ -318,8 +314,6 @@ function Meet() {
           localStream={localStream}
           mainView={mainView}
           setMainView={setMainView}
-          config={config}
-          setConfig={setConfig}
           setLocalStream={setLocalStream}
           remoteStreams={remoteStreams}
           socket={socket}

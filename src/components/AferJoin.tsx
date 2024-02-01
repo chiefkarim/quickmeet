@@ -1,15 +1,13 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { Socket } from "socket.io-client";
 import Video from "./Video";
-import RemoteVideo, { Config } from "./remoteVideo";
+import RemoteVideo from "./remoteVideo";
 import MessagingBoard from "./MessagingBoard";
 import Footer from "./Footer";
 import { mainView } from "../pages/Meet";
 
 interface Props {
   localStream: MediaStream | null;
-  config: Config;
-  setConfig: Dispatch<SetStateAction<Config>>;
   mainView: mainView;
   setMainView: Dispatch<SetStateAction<mainView>>;
   setLocalStream: Dispatch<SetStateAction<MediaStream | null>>;
@@ -20,8 +18,7 @@ interface Props {
 
 const AferJoin: React.FC<Props> = ({
   localStream,
-  config,
-  setConfig,
+
   mainView,
   setMainView,
   setLocalStream,
@@ -64,11 +61,7 @@ const AferJoin: React.FC<Props> = ({
                   // onClick={SwitchMainScreen}
                   className="small-screen flex gap-[1rem] h-40 w-64 justify-between"
                 >
-                  <RemoteVideo
-                    remoteStream={remoteStream}
-                    config={config}
-                    setConfig={setConfig}
-                  />
+                  <RemoteVideo remoteStream={remoteStream} />
                 </div>
               ))}
             </div>
