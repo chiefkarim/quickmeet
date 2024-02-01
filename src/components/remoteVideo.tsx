@@ -17,23 +17,25 @@ export interface Config {
 }
 
 const RemoteVideo = ({ remoteStream, config, setConfig }: props) => {
-  const [stream, setStream] = useState(remoteStream);
+  // const [stream, setStream] = useState(remoteStream);
   const videoRef = useRef<null | HTMLVideoElement>(null);
 
   console.log(config);
 
-  const updateConfig = () => {
-    const video = stream?.getVideoTracks().some((track) => track.enabled);
-    const audio = stream?.getAudioTracks().some((track) => track.enabled);
-    setConfig({ video, audio });
-  };
+  // const updateConfig = () => {
+  //   const video = remoteStream?.getVideoTracks().some((track) => track.enabled);
+  //   const audio = remoteStream?.getAudioTracks().some((track) => track.enabled);
+  //   setConfig({ video, audio });
+  // };
+
+  const video = remoteStream?.getVideoTracks().some((track) => track.enabled);
+  const audio = remoteStream?.getAudioTracks().some((track) => track.enabled);
 
   useEffect(() => {
-    updateConfig();
     if (videoRef && videoRef.current) {
-      videoRef.current.srcObject = stream;
+      videoRef.current.srcObject = remoteStream;
     }
-  }, [stream, videoRef]);
+  }, [videoRef, remoteStream]);
 
   return (
     <>
@@ -47,8 +49,8 @@ const RemoteVideo = ({ remoteStream, config, setConfig }: props) => {
         ></video>
         <div className="absolute flex w-full bottom-0 justify-between black-gradient-hover">
           <div className="flex flex-row gap-2 m-2">
-            {config.video ? <CamOn /> : <CamOff />}
-            {config.audio ? <MicOn /> : <MicOff />}
+            {video ? <CamOn /> : <CamOff />}
+            {audio ? <MicOn /> : <MicOff />}
           </div>
         </div>
       </div>

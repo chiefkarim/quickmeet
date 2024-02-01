@@ -61,9 +61,9 @@ let users: userObject = {};
 function Meet() {
   const [socket, setSocket] = useState<null | Socket>(null);
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(
-    new MediaStream()
-  );
+  const [remoteStreams, setRemoteStreams] = useState<
+    MediaStream[] | null | undefined
+  >([]);
 
   const [config, setConfig] = useState<Config>({ video: false, audio: false });
 
@@ -82,6 +82,26 @@ function Meet() {
   useEffect(() => {
     socket?.on("userList", (data: userObject) => {
       updateUserList(data, users);
+
+      let streamIds: Array<string> = [];
+      Object.keys(users).forEach((user) => {
+        if (users[user].stream) {
+          let id = users[user].stream.id;
+          streamIds.push(id);
+        }
+      });
+
+      console.log(streamIds);
+
+      setRemoteStreams((prevStreams) => {
+        if (prevStreams) {
+          return prevStreams?.filter((prevStream) =>
+            streamIds.includes(prevStream.id)
+          );
+        } else {
+          return prevStreams;
+        }
+      });
     });
 
     socket?.on("localDescription", async ({ description, from }) => {
@@ -92,6 +112,13 @@ function Meet() {
 
       pc?.setRemoteDescription(description);
 
+      console.log(enterRoom)
+      if (enterRoom) {
+        localStream?.getTracks().forEach((track) => {
+          pc.addTrack(track, localStream);
+        });
+      }
+
       pc.ontrack = (event) => {
         const track = event.track;
         console.log({ track: track.kind });
@@ -100,10 +127,32 @@ function Meet() {
         if (!stream) users[from].stream = new MediaStream();
 
         users[from].stream.addTrack(track);
-        console.log(
-          users[from].stream.getAudioTracks()[0],
-          users[from].stream.getVideoTracks()[0]
-        );
+
+        setRemoteStreams((prevStreams) => {
+          // add first stream if prevStreams is null
+          if (!prevStreams) {
+            return [users[from].stream];
+          } // adding new Stream to array.
+
+          const isStreamPresent = prevStreams?.some(
+            (prevStream) => prevStream.id === users[from].stream.id
+          );
+
+          let updatedStreams = prevStreams.map((prevStream) =>
+            prevStream.id === users[from].stream.id
+              ? users[from].stream
+              : prevStream
+          );
+
+          if (!isStreamPresent) {
+            console.log({ streamPresent: isStreamPresent });
+            updatedStreams = [...updatedStreams, users[from].stream];
+          }
+
+          console.log(updatedStreams);
+
+          return updatedStreams;
+        });
       };
 
       socket?.on("iceCandidate", ({ candidate, from }) => {
@@ -142,11 +191,37 @@ function Meet() {
           if (!stream) users[from].stream = new MediaStream();
 
           users[from].stream.addTrack(track);
-          console.log(
-            users[from].stream.getAudioTracks()[0],
-            users[from].stream.getVideoTracks()[0]
-          );
+
+          setRemoteStreams((prevStreams) => {
+            // add first stream if prevStreams is null
+            if (!prevStreams) {
+              return [users[from].stream];
+            } // adding new Stream to array.
+
+            const isStreamPresent = prevStreams?.some(
+              (prevStream) => prevStream.id === users[from].stream.id
+            );
+
+            let updatedStreams = prevStreams.map((prevStream) =>
+              prevStream.id === users[from].stream.id
+                ? users[from].stream
+                : prevStream
+            );
+
+            if (!isStreamPresent) {
+              updatedStreams = [...updatedStreams, users[from].stream];
+            }
+            console.log(updatedStreams);
+
+            return updatedStreams;
+          });
+          // console.log(
+          //   users[from].stream.getAudioTracks()[0],
+          //   users[from].stream.getVideoTracks()[0]
+          // );
         };
+
+        console.log(pc.connectionState);
       }
 
       socket?.on("iceCandidateReply", ({ candidate, from }) => {
@@ -179,7 +254,7 @@ function Meet() {
       //     socket?.emit("iceCandidateReply", { candidate });
       //   };
     });
-  }, [socket, remoteStream]);
+  }, [socket]);
 
   async function join() {
     try {
@@ -203,6 +278,14 @@ function Meet() {
           console.log(track);
           pc.addTrack(track, localStream);
         });
+
+        console.log(pc.connectionState);
+        if (
+          pc.connectionState === "connected" ||
+          pc.connectionState === "connecting"
+        ) {
+          return;
+        }
 
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
@@ -238,7 +321,7 @@ function Meet() {
           config={config}
           setConfig={setConfig}
           setLocalStream={setLocalStream}
-          remoteStream={remoteStream}
+          remoteStreams={remoteStreams}
           socket={socket}
           roomID={roomID}
         />

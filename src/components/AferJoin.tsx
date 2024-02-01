@@ -13,7 +13,7 @@ interface Props {
   mainView: mainView;
   setMainView: Dispatch<SetStateAction<mainView>>;
   setLocalStream: Dispatch<SetStateAction<MediaStream | null>>;
-  remoteStream: MediaStream | null;
+  remoteStreams: MediaStream[] | null | undefined;
   socket: Socket | null;
   roomID: string | undefined;
 }
@@ -25,7 +25,7 @@ const AferJoin: React.FC<Props> = ({
   mainView,
   setMainView,
   setLocalStream,
-  remoteStream,
+  remoteStreams,
   socket,
   roomID,
 }) => {
@@ -33,58 +33,44 @@ const AferJoin: React.FC<Props> = ({
     mainView === "local" ? setMainView("remote") : setMainView("local");
   };
 
+  console.log(remoteStreams);
+
   return (
     <div className="bg-white pt-5 min-h-screen">
       <section className="px-0">
         <div className="px-10 mr-0 max-w[1440px] flex gap-[1rem] justify-between">
           <div className="flex flex-col gap-[1rem] max-w-[85vw] tablet:max-w-[55vw]  ">
-            <div className="localVideo  w-[65vw]   min-h-[75vh] relative bg-extra-light-grey">
-              {mainView === "local" ? (
-                <Video
-                  id={localStream?.id}
-                  localStream={localStream}
-                  setLocalStream={setLocalStream}
-                  autoRun={false}
-                />
-              ) : (
-                <RemoteVideo
-                  remoteStream={remoteStream}
-                  config={config}
-                  setConfig={setConfig}
-                />
-              )}
+            <div className="localVideo  w-[65vw]   max-h-[75vh] relative bg-extra-light-grey">
+              {
+                mainView === "local" ? (
+                  <Video
+                    id={localStream?.id}
+                    localStream={localStream}
+                    setLocalStream={setLocalStream}
+                    autoRun={false}
+                  />
+                ) : null
+                // <RemoteVideo
+                //   remoteStream={remoteStream}
+                //   config={config}
+                //   setConfig={setConfig}
+                // />
+              }
             </div>
-            <div
-              onClick={SwitchMainScreen}
-              className="small-screen flex gap-[1rem] h-40 w-64 justify-between"
-            >
-              {mainView === "remote" ? (
-                <Video
-                  id={localStream?.id}
-                  localStream={localStream}
-                  setLocalStream={setLocalStream}
-                  autoRun={false}
-                />
-              ) : (
-                <RemoteVideo
-                  remoteStream={remoteStream}
-                  config={config}
-                  setConfig={setConfig}
-                />
-              )}
-              {/* {streams.map((stream) => {
-                  console.log(streams);
-                  if (stream.id != localStreamId) {
-                    return (
-                      <li
-                        key={stream.id}
-                        className="w-[12.0625rem] h-[6.4375rem] bg-extra-light-grey "
-                      >
-                        <RemoteVideo Stream={stream.stream} />
-                      </li>
-                    );
-                  }
-                })} */}
+            <div className="remote flex flex-row gap-3">
+              {remoteStreams?.map((remoteStream) => (
+                <div
+                  key={crypto.randomUUID()}
+                  // onClick={SwitchMainScreen}
+                  className="small-screen flex gap-[1rem] h-40 w-64 justify-between"
+                >
+                  <RemoteVideo
+                    remoteStream={remoteStream}
+                    config={config}
+                    setConfig={setConfig}
+                  />
+                </div>
+              ))}
             </div>
           </div>
           <MessagingBoard socket={socket} roomID={roomID} />
